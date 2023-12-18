@@ -7,10 +7,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BepInEx.Configuration;
 
 namespace RafiesCompany
 {
+    public class ModConfig
+    {
+        public const string SectionGeneral = "General";
+
+        public static ConfigEntry<float> MovementHinderance { get; private set; }
+        public static ConfigEntry<float> SinkingSpeedMultiplier { get; private set; }
+
+        public static void InitConfigEntries(ConfigFile configFile)
+        {
+            MovementHinderance = configFile.Bind(SectionGeneral, "MovementHinderance", 1.6f, "Defines how much movement speed is slowed in quicksand.");
+            SinkingSpeedMultiplier = configFile.Bind(SectionGeneral, "SinkingSpeedMultiplier", 0.15f, "The sinking speed multiplier in quicksand.");
+        }
+    }
+
     [BepInPlugin(modGUID, modName, modVersion)]
+
     public class RafiesCompanyBase :BaseUnityPlugin
     {
         private const string modGUID = "Bandit.RafiesCompany";
@@ -63,6 +79,22 @@ namespace RafiesCompany
             {
                 mls.LogError($"Failed to patch QuicksandTriggerPatch: {ex}");
             }
+
+                ModConfig.InitConfigEntries(Config);
+        }
+
+        void Update()
+        {
+            // Access the configured values
+            float currentMovementHinderance = ModConfig.MovementHinderance.Value;
+            float currentSinkingSpeedMultiplier = ModConfig.SinkingSpeedMultiplier.Value;
+
+            // Use the values in your mod logic
+            // ...
+
+            // For debugging or information purposes, you can log the values
+            mls.LogInfo($"Current Movement Hinderance: {currentMovementHinderance}");
+            mls.LogInfo($"Current Sinking Speed Multiplier: {currentSinkingSpeedMultiplier}");
         }
     }
 }

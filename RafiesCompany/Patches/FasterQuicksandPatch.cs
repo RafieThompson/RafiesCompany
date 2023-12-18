@@ -22,20 +22,18 @@ namespace RafiesCompany.Patches
         [HarmonyPostfix]
         static void ModifyQuicksandEffects(QuicksandTrigger __instance)
         {
+            float movementHinderance = ModConfig.MovementHinderance.Value;
+            float sinkingSpeedMultiplier = ModConfig.SinkingSpeedMultiplier.Value;
+
             if (__instance.sinkingLocalPlayer)
             {
                 // Modify movementHinderance and sinkingSpeedMultiplier when sinkingLocalPlayer is true
-                __instance.movementHinderance = 5.0f;
-                __instance.sinkingSpeedMultiplier = 0.99f;
+                __instance.movementHinderance = movementHinderance;
+                __instance.sinkingSpeedMultiplier = sinkingSpeedMultiplier;
 
                 mls.LogInfo($"MovementHinderance changed to: {__instance.movementHinderance}");
                 mls.LogInfo($"SinkingSpeedMultiplier changed to: {__instance.sinkingSpeedMultiplier}");
 
-                hasLoggedSinking = true;
-            }
-            else if (!__instance.sinkingLocalPlayer)
-            {
-                hasLoggedSinking = false;
             }
         }
     }
