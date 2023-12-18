@@ -18,10 +18,13 @@ namespace RafiesCompany
         public static ConfigEntry<float> MovementHinderance { get; private set; }
         public static ConfigEntry<float> SinkingSpeedMultiplier { get; private set; }
 
+        public static ConfigEntry<Boolean> SprintMeter { get; private set; }
+
         public static void InitConfigEntries(ConfigFile configFile)
         {
             MovementHinderance = configFile.Bind(SectionGeneral, "MovementHinderance", 1.6f, "Defines how much movement speed is slowed in quicksand.");
             SinkingSpeedMultiplier = configFile.Bind(SectionGeneral, "SinkingSpeedMultiplier", 0.15f, "The sinking speed multiplier in quicksand.");
+            SprintMeter = configFile.Bind(SectionGeneral, "SprintMeter", true, "Unlimited Sprint");
         }
     }
 
@@ -38,6 +41,7 @@ namespace RafiesCompany
         private static RafiesCompanyBase Instance;
 
         internal ManualLogSource mls;
+        public bool CurrentSprintMeter => ModConfig.SprintMeter.Value;
 
         void Awake()
         {
@@ -88,13 +92,12 @@ namespace RafiesCompany
             // Access the configured values
             float currentMovementHinderance = ModConfig.MovementHinderance.Value;
             float currentSinkingSpeedMultiplier = ModConfig.SinkingSpeedMultiplier.Value;
-
-            // Use the values in your mod logic
-            // ...
+            bool currentSprintMeter = ModConfig.SprintMeter.Value;
 
             // For debugging or information purposes, you can log the values
             mls.LogInfo($"Current Movement Hinderance: {currentMovementHinderance}");
             mls.LogInfo($"Current Sinking Speed Multiplier: {currentSinkingSpeedMultiplier}");
+            mls.LogInfo($"Unlimited Sprint?: {currentSprintMeter}");
         }
     }
 }

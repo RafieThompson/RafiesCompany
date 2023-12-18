@@ -15,7 +15,11 @@ namespace RafiesCompany.Patches
         [HarmonyPostfix]
         static void infiniteSprintPatch(ref float ___sprintMeter)
         {
-            ___sprintMeter = 1f;
+            bool unlimitedSprint = ModConfig.SprintMeter.Value;
+            if (unlimitedSprint)
+            {
+                ___sprintMeter = 1f;
+            }
         }
 
     }
