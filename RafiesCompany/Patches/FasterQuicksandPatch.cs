@@ -4,27 +4,44 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BepInEx.Logging;
+using GameNetcodeStuff;
+using HarmonyLib;
+using UnityEngine;
+using BepInEx.Logging;
 
 namespace RafiesCompany.Patches
 {
     [HarmonyPatch(typeof(QuicksandTrigger))]
-    internal class FasterQuicksandPatch
+    internal class QuicksandTriggerPatch
     {
-        [HarmonyPatch("movementHinderance")]
+        private static ManualLogSource mls = BepInEx.Logging.Logger.CreateLogSource("RafiesCompany.Patches.FasterQuicksandPatch");
+        private static bool hasLoggedSinking = false;
+
+        [HarmonyPatch("OnTriggerStay")]
         [HarmonyPostfix]
-
-        static void MovementHinderancePatch(ref float ___movementHinderance)
+        static void ModifyQuicksandEffects(QuicksandTrigger __instance)
         {
-            ___movementHinderance = 3.0f;
+            if (__instance.sinkingLocalPlayer)
+            {
+                // Modify movementHinderance and sinkingSpeedMultiplier when sinkingLocalPlayer is true
+                __instance.movementHinderance = 5.0f;
+                __instance.sinkingSpeedMultiplier = 0.99f;
+
+                mls.LogInfo($"MovementHinderance changed to: {__instance.movementHinderance}");
+                mls.LogInfo($"SinkingSpeedMultiplier changed to: {__instance.sinkingSpeedMultiplier}");
+
+                hasLoggedSinking = true;
+            }
+            else if (!__instance.sinkingLocalPlayer)
+            {
+                hasLoggedSinking = false;
+            }
         }
-
-        [HarmonyPatch("sinkingSpeedMultiplier")]
-        [HarmonyPostfix]
-        static void SinkingSpeedMultiplierPatch(ref float ___sinkingSpeedMultiplier)
-        {
-            ___sinkingSpeedMultiplier = 1.0f;
-        }
-
-
     }
 }
+
+
+
+
+

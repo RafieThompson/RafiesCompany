@@ -32,15 +32,37 @@ namespace RafiesCompany
 
             mls = BepInEx.Logging.Logger.CreateLogSource(modGUID);
 
-            mls.LogInfo("Rafie's Company initialised");
+            mls.LogInfo("Rafie's Company initialized");
 
-            harmony.PatchAll(typeof(RafiesCompanyBase));
-            harmony.PatchAll(typeof(PlayerControllerBPatch));
-            harmony.PatchAll(typeof(FasterQuicksandPatch));
+            try
+            {
+                harmony.PatchAll(typeof(RafiesCompanyBase));
+                mls.LogInfo("RafiesCompanyBase patch applied successfully");
+            }
+            catch (Exception ex)
+            {
+                mls.LogError($"Failed to patch RafiesCompanyBase: {ex}");
+            }
+
+            try
+            {
+                harmony.PatchAll(typeof(PlayerControllerBPatch));
+                mls.LogInfo("PlayerControllerBPatch applied successfully");
+            }
+            catch (Exception ex)
+            {
+                mls.LogError($"Failed to patch PlayerControllerBPatch: {ex}");
+            }
+
+            try
+            {
+                harmony.PatchAll(typeof(QuicksandTriggerPatch));
+                mls.LogInfo("QuicksandTriggerPatch applied successfully");
+            }
+            catch (Exception ex)
+            {
+                mls.LogError($"Failed to patch QuicksandTriggerPatch: {ex}");
+            }
         }
-
-
-
-
     }
 }
