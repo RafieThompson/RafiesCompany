@@ -19,12 +19,14 @@ namespace RafiesCompany
         public static ConfigEntry<float> SinkingSpeedMultiplier { get; private set; }
 
         public static ConfigEntry<Boolean> SprintMeter { get; private set; }
+        public static ConfigEntry<Boolean> CompanyBuyingRate { get; private set; }
 
         public static void InitConfigEntries(ConfigFile configFile)
         {
             MovementHinderance = configFile.Bind(SectionGeneral, "MovementHinderance", 1.6f, "Defines how much movement speed is slowed in quicksand.");
             SinkingSpeedMultiplier = configFile.Bind(SectionGeneral, "SinkingSpeedMultiplier", 0.15f, "The sinking speed multiplier in quicksand.");
             SprintMeter = configFile.Bind(SectionGeneral, "SprintMeter", true, "Unlimited Sprint");
+            CompanyBuyingRate = configFile.Bind(SectionGeneral, "CompanyBuyingRate", true, "Add random modifier to company buying rate");
         }
     }
 
@@ -57,34 +59,18 @@ namespace RafiesCompany
             try
             {
                 harmony.PatchAll(typeof(RafiesCompanyBase));
-                mls.LogInfo("RafiesCompanyBase patch applied successfully");
-            }
-            catch (Exception ex)
-            {
-                mls.LogError($"Failed to patch RafiesCompanyBase: {ex}");
-            }
-
-            try
-            {
                 harmony.PatchAll(typeof(PlayerControllerBPatch));
-                mls.LogInfo("PlayerControllerBPatch applied successfully");
-            }
-            catch (Exception ex)
-            {
-                mls.LogError($"Failed to patch PlayerControllerBPatch: {ex}");
-            }
-
-            try
-            {
                 harmony.PatchAll(typeof(QuicksandTriggerPatch));
-                mls.LogInfo("QuicksandTriggerPatch applied successfully");
+                harmony.PatchAll(typeof(ModifyBuyingRatePatch));
+                mls.LogInfo("All patches applied successfully");
             }
             catch (Exception ex)
             {
-                mls.LogError($"Failed to patch QuicksandTriggerPatch: {ex}");
+                mls.LogError($"Failed to patch: {ex}");
             }
 
-                ModConfig.InitConfigEntries(Config);
+
+            ModConfig.InitConfigEntries(Config);
         }
 
         void Update()
@@ -93,6 +79,7 @@ namespace RafiesCompany
             float currentMovementHinderance = ModConfig.MovementHinderance.Value;
             float currentSinkingSpeedMultiplier = ModConfig.SinkingSpeedMultiplier.Value;
             bool currentSprintMeter = ModConfig.SprintMeter.Value;
+            bool currentModifyBuyingRate = ModConfig.CompanyBuyingRate.Value;   
 
             // For debugging or information purposes, you can log the values
             mls.LogInfo($"Current Movement Hinderance: {currentMovementHinderance}");

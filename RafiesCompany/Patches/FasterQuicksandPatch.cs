@@ -17,6 +17,8 @@ namespace RafiesCompany.Patches
     {
         private static ManualLogSource mls = BepInEx.Logging.Logger.CreateLogSource("RafiesCompany.Patches.FasterQuicksandPatch");
         private static bool hasLoggedSinking = false;
+        private static float lastLogTime = 0f;
+        private static float logInterval = 1f;
 
         [HarmonyPatch("OnTriggerStay")]
         [HarmonyPostfix]
@@ -31,9 +33,15 @@ namespace RafiesCompany.Patches
                 __instance.movementHinderance = movementHinderance;
                 __instance.sinkingSpeedMultiplier = sinkingSpeedMultiplier;
 
-                mls.LogInfo($"MovementHinderance changed to: {__instance.movementHinderance}");
-                mls.LogInfo($"SinkingSpeedMultiplier changed to: {__instance.sinkingSpeedMultiplier}");
+                if (Time.time - lastLogTime >= logInterval)
+                {
+                    // Log only once per second
+                    mls.LogInfo($"MovementHinderance changed to: {__instance.movementHinderance}");
+                    mls.LogInfo($"SinkingSpeedMultiplier changed to: {__instance.sinkingSpeedMultiplier}");
 
+                    // Update the last log time
+                    lastLogTime = Time.time;
+                }
             }
         }
     }

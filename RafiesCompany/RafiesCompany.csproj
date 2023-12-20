@@ -58,7 +58,9 @@
     <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Other\Messages.cs" />
     <Compile Include="Patches\FasterQuicksandPatch.cs" />
+    <Compile Include="Patches\ModifyBuyingRatePatch.cs" />
     <Compile Include="Patches\PlayerControllerBPatch.cs" />
     <Compile Include="plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
