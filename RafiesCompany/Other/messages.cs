@@ -11,6 +11,7 @@ namespace RafiesCompany.Other
         public static string[] IncreaseMessages = {
             "due to impressive profits from our one man teams.",
             "following a successful increase in great assets.",
+            "thanks to major company redundancies."
         };
 
         public static string[] DecreaseMessages =

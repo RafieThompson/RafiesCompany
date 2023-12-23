@@ -15,7 +15,9 @@ namespace RafiesCompany.Patches
         [HarmonyPostfix]
         static void infiniteSprintPatch(ref float ___sprintMeter)
         {
-            bool unlimitedSprint = ModConfig.SprintMeter.Value;
+            // Access the static field directly using the class name
+            bool unlimitedSprint = RafiesCompanyBase.modConfig.SprintMeter.Value;
+
             if (unlimitedSprint)
             {
                 ___sprintMeter = 1f;

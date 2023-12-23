@@ -8,53 +8,49 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BepInEx.Configuration;
+using RafiesCompany.Events;
+using RafiesCompany.Other;
+using UnityEngine;
 
 namespace RafiesCompany
 {
-    public class ModConfig
-    {
-        public const string SectionGeneral = "General";
-
-        public static ConfigEntry<float> MovementHinderance { get; private set; }
-        public static ConfigEntry<float> SinkingSpeedMultiplier { get; private set; }
-
-        public static ConfigEntry<Boolean> SprintMeter { get; private set; }
-        public static ConfigEntry<Boolean> CompanyBuyingRate { get; private set; }
-
-        public static void InitConfigEntries(ConfigFile configFile)
-        {
-            MovementHinderance = configFile.Bind(SectionGeneral, "MovementHinderance", 1.6f, "Defines how much movement speed is slowed in quicksand.");
-            SinkingSpeedMultiplier = configFile.Bind(SectionGeneral, "SinkingSpeedMultiplier", 0.15f, "The sinking speed multiplier in quicksand.");
-            SprintMeter = configFile.Bind(SectionGeneral, "SprintMeter", true, "Unlimited Sprint");
-            CompanyBuyingRate = configFile.Bind(SectionGeneral, "CompanyBuyingRate", true, "Add random modifier to company buying rate");
-        }
-    }
-
     [BepInPlugin(modGUID, modName, modVersion)]
 
-    public class RafiesCompanyBase :BaseUnityPlugin
+    public class RafiesCompanyBase : BaseUnityPlugin
     {
+        public static RafiesCompanyBase instance;
         private const string modGUID = "Bandit.RafiesCompany";
         private const string modName = "Rafie's Company";
         private const string modVersion = "1.0.0.0";
 
         private readonly Harmony harmony = new Harmony(modGUID);
-
-        private static RafiesCompanyBase Instance;
-
         internal ManualLogSource mls;
-        public bool CurrentSprintMeter => ModConfig.SprintMeter.Value;
+        public static ModConfig modConfig = new ModConfig();
+        public static bool loaded;
+
+
+
+        public static BanditEvent gameEvent = null;
+        internal static EventCreator eventCreator = new EventCreator();
+
+        public static SelectableLevel lastLevel = null;
+
+        public static List<int> difficultyModifiedLevels = new List<int>();
+
 
         void Awake()
         {
-            if (Instance == null)
+            if (instance == null)
             {
-                Instance = this;
+                instance = this;
             }
 
             mls = BepInEx.Logging.Logger.CreateLogSource(modGUID);
+            modConfig.InitConfigEntries();
+
 
             mls.LogInfo("Rafie's Company initialized");
+            BanditEventList.AddBaseEvents(modConfig);
 
             try
             {
@@ -62,29 +58,143 @@ namespace RafiesCompany
                 harmony.PatchAll(typeof(PlayerControllerBPatch));
                 harmony.PatchAll(typeof(QuicksandTriggerPatch));
                 harmony.PatchAll(typeof(ModifyBuyingRatePatch));
+
                 mls.LogInfo("All patches applied successfully");
             }
             catch (Exception ex)
             {
                 mls.LogError($"Failed to patch: {ex}");
             }
+        }
 
+        public void OnDestroy()
+        {
 
-            ModConfig.InitConfigEntries(Config);
         }
 
         void Update()
         {
-            // Access the configured values
-            float currentMovementHinderance = ModConfig.MovementHinderance.Value;
-            float currentSinkingSpeedMultiplier = ModConfig.SinkingSpeedMultiplier.Value;
-            bool currentSprintMeter = ModConfig.SprintMeter.Value;
-            bool currentModifyBuyingRate = ModConfig.CompanyBuyingRate.Value;   
-
-            // For debugging or information purposes, you can log the values
-            mls.LogInfo($"Current Movement Hinderance: {currentMovementHinderance}");
-            mls.LogInfo($"Current Sinking Speed Multiplier: {currentSinkingSpeedMultiplier}");
-            mls.LogInfo($"Unlimited Sprint?: {currentSprintMeter}");
         }
+
+        [HarmonyPatch(typeof(TimeOfDay), "Awake")]
+        [HarmonyPrefix]
+        static void QuotaAjuster(TimeOfDay __instance)
+        {
+            if (modConfig.EnableQuotaModification.Value)
+            {
+                __instance.quotaVariables.startingQuota = modConfig.StartingQuota.Value;
+            }
+
+            if (modConfig.EnableCreditModification.Value)
+            {
+                __instance.quotaVariables.startingCredits = modConfig.StartingCredits.Value;
+                __instance.quotaVariables.baseIncrease = modConfig.QuotaIncrease.Value;
+            }
+
+            if (modConfig.EnableDeadlineModification.Value)
+            {
+                __instance.quotaVariables.deadlineDaysAmount = modConfig.DeadlineDays.Value;
+            }
+        }
+
+        [HarmonyPatch(typeof(RoundManager), nameof(RoundManager.LoadNewLevel))]
+        [HarmonyPrefix]
+        static bool LoadNewLevel(ref SelectableLevel newLevel)
+        {
+            //ChangeLevelDifficulty(ref newLevel);
+
+            // Clean and get the event for the game.
+            if (gameEvent != null)
+            {
+                gameEvent.OnLoadNewLevelCleanup(ref lastLevel);
+            }
+
+            if (newLevel.sceneName == "CompanyBuilding")
+            {
+                gameEvent = new EventNone();
+            }
+            else
+            {
+                // Add credits
+                Terminal terminal = FindObjectOfType<Terminal>();
+
+                if (modConfig.EnableCreditModification.Value)
+                {
+                    terminal.groupCredits += modConfig.PassiveCredits.Value;
+                }
+
+                int counter = 0;
+                do
+                {
+                    gameEvent = eventCreator.GetRandomEventWithWeight(modConfig.EventProbability.Value);
+                    //gameEvent = eventCreator.GetEventInCustomOrder();
+
+                    counter++;
+                }
+                while (!gameEvent.IsValid(ref newLevel) && counter < 4); //fail safe
+
+                if (counter >= 4)
+                {
+                    gameEvent = new EventNone();
+                }
+            }
+
+            if (modConfig.EventHidden.Value)
+            {
+                HUDManager.Instance.AddTextToChatOnServer($"<color=red>Level event:</color> <color=green>?</color>");
+            }
+            else
+            {
+                HUDManager.Instance.AddTextToChatOnServer($"<color=red>Level event:</color> <color=green>{gameEvent.GetEventName()}</color>");
+            }
+
+            gameEvent.OnLoadNewLevel(ref newLevel, modConfig);
+
+            lastLevel = newLevel;
+
+            return true;
+        }
+        //static void ChangeLevelDifficulty(ref SelectableLevel newLevel)
+        //{
+        //    if (difficultyModifiedLevels.Contains(newLevel.levelID))
+        //        return;
+
+        //    if (modConfig.EnableScrapModification.Value)
+        //    {
+        //        newLevel.minScrap += modConfig.MinScrapModifier.Value;
+        //        newLevel.maxScrap += modConfig.MaxScrapModifier.Value;
+        //        newLevel.minTotalScrapValue += modConfig.MinScrapValueModifier.Value;
+        //        newLevel.maxTotalScrapValue += modConfig.MaxScrapValueModifier.Value;
+        //    }
+
+
+        //    if (modConfig.EnableHazardModification.Value)
+        //    {
+        //        foreach (var item in newLevel.spawnableMapObjects)
+        //        {
+        //            if (item.prefabToSpawn.GetComponentInChildren<Turret>() != null)
+        //            {
+        //                item.numberToSpawn = new AnimationCurve(new Keyframe(0f, modConfig.TurretSpawnCurve1.Value), new Keyframe(1f, modConfig.TurretSpawnCurve2.Value));
+        //            }
+        //            else if (item.prefabToSpawn.GetComponentInChildren<Landmine>() != null)
+        //            {
+        //                item.numberToSpawn = new AnimationCurve(new Keyframe(0f, modConfig.MineSpawnCurve1.Value), new Keyframe(1f, modConfig.MineSpawnCurve2.Value));
+        //            }
+        //        }
+        //    }
+
+        //    if (modConfig.EnableEnemyModification.Value)
+        //    {
+        //        newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new Keyframe(0, modConfig.InsideEnemySpawnCurve1.Value), new Keyframe(0.5f, modConfig.InsideEnemySpawnCurve2.Value));
+        //        newLevel.daytimeEnemySpawnChanceThroughDay = new AnimationCurve(new Keyframe(0, modConfig.DaytimeEnemySpawnCurve1.Value), new Keyframe(0.5f, modConfig.DaytimeEnemySpawnCurve2.Value));
+        //        newLevel.outsideEnemySpawnChanceThroughDay = new AnimationCurve(new Keyframe(0, modConfig.OutsideEnemySpawnCurve1.Value), new Keyframe(20f, modConfig.OutsideEnemySpawnCurve2.Value), new Keyframe(21f, modConfig.OutsideEnemySpawnCurve3.Value));
+
+        //        newLevel.maxEnemyPowerCount += modConfig.MaxInsideEnemyPowerModifier.Value;
+        //        newLevel.maxOutsideEnemyPowerCount += modConfig.MaxOutsideEnemyPowerModifier.Value;
+        //        newLevel.maxDaytimeEnemyPowerCount += modConfig.MaxDaytimeEnemyPowerModifier.Value;
+        //    }
+
+        //    difficultyModifiedLevels.Add(newLevel.levelID);
+        // }
     }
 }
