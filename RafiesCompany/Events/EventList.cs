@@ -71,6 +71,10 @@ namespace RafiesCompany.Events
             {
                 AddEvent(new JesterEventCreator());
             }
+            if (configs.EnableMaskedEvent.Value)
+            {
+                AddEvent(new MaskedEventCreator());
+            }
         }
     }
 }
