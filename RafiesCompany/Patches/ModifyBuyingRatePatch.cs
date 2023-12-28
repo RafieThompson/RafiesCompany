@@ -37,7 +37,7 @@ namespace RafiesCompany.Patches
                 float randomVariation = UnityEngine.Random.Range(-0.20f, 0.20f);
                 StartOfRound.Instance.companyBuyingRate += randomVariation;
 
-                mls.LogInfo($"Randomized buying rate by {randomVariation}, new rate: {StartOfRound.Instance.companyBuyingRate}");
+                mls.LogInfo($"Randomised buying rate by {randomVariation}, new rate: {StartOfRound.Instance.companyBuyingRate}");
                 if (randomVariation > 0.00f)
                 {
                     string increaseMessage = GetRandomMessage(CompanyBuyingRateMessages.IncreaseMessages);
