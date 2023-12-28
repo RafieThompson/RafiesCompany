@@ -22,7 +22,7 @@ namespace RafiesCompany.Events
 
         public override string GetEventName()
         {
-            return "You can't run from heaven...";
+            return "WEATHER ANOMALY DETECTED.";
         }
 
         public override void OnLoadNewLevel(ref SelectableLevel newLevel, ModConfig configs)

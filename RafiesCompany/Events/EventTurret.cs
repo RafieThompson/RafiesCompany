@@ -22,7 +22,7 @@ namespace RafiesCompany.Events
 
         public override string GetEventName()
         {
-            return "You hear mechanical whirring from inside...";
+            return "WARNING: INCREASED DEFENCE LEVELS DETECTED.";
         }
 
         public override void OnLoadNewLevel(ref SelectableLevel newLevel, ModConfig configs)
@@ -32,7 +32,7 @@ namespace RafiesCompany.Events
                 if (item.prefabToSpawn.GetComponentInChildren<Turret>() != null)
                 {
                     oldCurve = item.numberToSpawn;
-                    item.numberToSpawn = new AnimationCurve(new Keyframe(0f, 15f), new Keyframe(1f, 15));
+                    item.numberToSpawn = new AnimationCurve(new Keyframe(0f, 50f), new Keyframe(1f, 20));
                 }
             }
         }
