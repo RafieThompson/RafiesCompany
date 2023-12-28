@@ -22,7 +22,7 @@ namespace RafiesCompany.Events
 
         public override string GetEventName()
         {
-            return "They knew you were coming...";
+            return "WARNING: INCREASED DEFENCE LEVELS DETECTED.";
         }
 
         public override void OnLoadNewLevel(ref SelectableLevel newLevel, ModConfig configs)
@@ -32,7 +32,7 @@ namespace RafiesCompany.Events
                 if (item.prefabToSpawn.GetComponentInChildren<Landmine>() != null)
                 {
                     oldCurve = item.numberToSpawn;
-                    item.numberToSpawn = new AnimationCurve(new UnityEngine.Keyframe(0f, 30f), new UnityEngine.Keyframe(1f, 30f));
+                    item.numberToSpawn = new AnimationCurve(new UnityEngine.Keyframe(0f, 50f), new UnityEngine.Keyframe(1f, 20f));
                 }
             }
         }
@@ -41,7 +41,7 @@ namespace RafiesCompany.Events
         {
             foreach (var item in newLevel.spawnableMapObjects)
             {
-                if (item.prefabToSpawn.GetComponentInChildren<Turret>() != null)
+                if (item.prefabToSpawn.GetComponentInChildren<Landmine>() != null)
                 {
                     item.numberToSpawn = oldCurve;
                 }
