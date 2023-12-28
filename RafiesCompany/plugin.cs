@@ -11,6 +11,7 @@ using BepInEx.Configuration;
 using RafiesCompany.Events;
 using RafiesCompany.Other;
 using UnityEngine;
+using System.Runtime.CompilerServices;
 
 namespace RafiesCompany
 {
@@ -24,7 +25,7 @@ namespace RafiesCompany
         private const string modVersion = "1.0.0.0";
 
         private readonly Harmony harmony = new Harmony(modGUID);
-        internal ManualLogSource mls;
+        internal static ManualLogSource mls;
         public static ModConfig modConfig = new ModConfig();
         public static bool loaded;
 
@@ -56,8 +57,9 @@ namespace RafiesCompany
             {
                 harmony.PatchAll(typeof(RafiesCompanyBase));
                 harmony.PatchAll(typeof(PlayerControllerBPatch));
-                harmony.PatchAll(typeof(QuicksandTriggerPatch));
+                //harmony.PatchAll(typeof(QuicksandTriggerPatch));
                 harmony.PatchAll(typeof(ModifyBuyingRatePatch));
+                //harmony.PatchAll(typeof(ModifyQuotaPatch));
 
                 mls.LogInfo("All patches applied successfully");
             }
@@ -77,12 +79,34 @@ namespace RafiesCompany
         }
 
         [HarmonyPatch(typeof(TimeOfDay), "Awake")]
-        [HarmonyPrefix]
-        static void QuotaAjuster(TimeOfDay __instance)
+        [HarmonyPostfix]
+        static void QuotaAdjuster(TimeOfDay __instance)
         {
-            if (modConfig.EnableQuotaModification.Value)
+            RafiesCompanyBase.mls.LogInfo("QuotaAdjuster method is called.");
+            if (modConfig.RandomiseQuota.Value)
             {
-                __instance.quotaVariables.startingQuota = modConfig.StartingQuota.Value;
+                float randomValue = UnityEngine.Random.Range(0.01f, 0.99f);
+
+                if (randomValue < 0.5f)
+                {
+                    int randomVariation = UnityEngine.Random.Range(-50, 50);
+                    __instance.quotaVariables.startingQuota += randomVariation;
+
+                    RafiesCompanyBase.mls.LogInfo($"Randomised quota by {randomVariation}, new rate: {TimeOfDay.Instance.quotaVariables.startingQuota}");
+                    if (randomVariation > 0)
+                    {
+                        HUDManager.Instance.AddTextToChatOnServer($"ATTENTION. The quota has increased");
+                    }
+                    else
+                    {
+                        HUDManager.Instance.AddTextToChatOnServer($"ATTENTION. The quota has decreased");
+                    }
+
+                }
+                else
+                {
+                    RafiesCompanyBase.mls.LogInfo($"Random value: {randomValue}, No randomisation, current quota: {TimeOfDay.Instance.quotaVariables.startingQuota}");
+                }
             }
 
             if (modConfig.EnableCreditModification.Value)
@@ -102,7 +126,6 @@ namespace RafiesCompany
         static bool LoadNewLevel(ref SelectableLevel newLevel)
         {
             //ChangeLevelDifficulty(ref newLevel);
-
             // Clean and get the event for the game.
             if (gameEvent != null)
             {
@@ -126,7 +149,7 @@ namespace RafiesCompany
                 int counter = 0;
                 do
                 {
-                    gameEvent = eventCreator.GetRandomEventWithWeight(modConfig.EventProbability.Value);
+                    gameEvent = eventCreator.GetRandomEventWithFixedChance(modConfig.FixedChance.Value);
                     //gameEvent = eventCreator.GetEventInCustomOrder();
 
                     counter++;
@@ -145,56 +168,55 @@ namespace RafiesCompany
             }
             else
             {
-                HUDManager.Instance.AddTextToChatOnServer($"<color=red>Level event:</color> <color=green>{gameEvent.GetEventName()}</color>");
+                HUDManager.Instance.AddTextToChatOnServer($"<color=red>{gameEvent.GetEventName()}</color>");
             }
 
             gameEvent.OnLoadNewLevel(ref newLevel, modConfig);
-
             lastLevel = newLevel;
 
             return true;
         }
-        //static void ChangeLevelDifficulty(ref SelectableLevel newLevel)
-        //{
-        //    if (difficultyModifiedLevels.Contains(newLevel.levelID))
-        //        return;
+        static void ChangeLevelDifficulty(ref SelectableLevel newLevel)
+        {
+            if (difficultyModifiedLevels.Contains(newLevel.levelID))
+                return;
 
-        //    if (modConfig.EnableScrapModification.Value)
-        //    {
-        //        newLevel.minScrap += modConfig.MinScrapModifier.Value;
-        //        newLevel.maxScrap += modConfig.MaxScrapModifier.Value;
-        //        newLevel.minTotalScrapValue += modConfig.MinScrapValueModifier.Value;
-        //        newLevel.maxTotalScrapValue += modConfig.MaxScrapValueModifier.Value;
-        //    }
+            if (modConfig.EnableScrapModification.Value)
+            {
+                newLevel.minScrap += modConfig.MinScrapModifier.Value;
+                newLevel.maxScrap += modConfig.MaxScrapModifier.Value;
+                newLevel.minTotalScrapValue += modConfig.MinScrapValueModifier.Value;
+                newLevel.maxTotalScrapValue += modConfig.MaxScrapValueModifier.Value;
+            }
 
 
-        //    if (modConfig.EnableHazardModification.Value)
-        //    {
-        //        foreach (var item in newLevel.spawnableMapObjects)
-        //        {
-        //            if (item.prefabToSpawn.GetComponentInChildren<Turret>() != null)
-        //            {
-        //                item.numberToSpawn = new AnimationCurve(new Keyframe(0f, modConfig.TurretSpawnCurve1.Value), new Keyframe(1f, modConfig.TurretSpawnCurve2.Value));
-        //            }
-        //            else if (item.prefabToSpawn.GetComponentInChildren<Landmine>() != null)
-        //            {
-        //                item.numberToSpawn = new AnimationCurve(new Keyframe(0f, modConfig.MineSpawnCurve1.Value), new Keyframe(1f, modConfig.MineSpawnCurve2.Value));
-        //            }
-        //        }
-        //    }
+            if (modConfig.EnableHazardModification.Value)
+            {
+                foreach (var item in newLevel.spawnableMapObjects)
+                {
+                    if (item.prefabToSpawn.GetComponentInChildren<Turret>() != null)
+                    {
+                        item.numberToSpawn = new AnimationCurve(new Keyframe(0f, modConfig.TurretSpawnCurve1.Value), new Keyframe(1f, modConfig.TurretSpawnCurve2.Value));
+                    }
+                    else if (item.prefabToSpawn.GetComponentInChildren<Landmine>() != null)
+                    {
+                        item.numberToSpawn = new AnimationCurve(new Keyframe(0f, modConfig.MineSpawnCurve1.Value), new Keyframe(1f, modConfig.MineSpawnCurve2.Value));
+                    }
+                }
+            }
 
-        //    if (modConfig.EnableEnemyModification.Value)
-        //    {
-        //        newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new Keyframe(0, modConfig.InsideEnemySpawnCurve1.Value), new Keyframe(0.5f, modConfig.InsideEnemySpawnCurve2.Value));
-        //        newLevel.daytimeEnemySpawnChanceThroughDay = new AnimationCurve(new Keyframe(0, modConfig.DaytimeEnemySpawnCurve1.Value), new Keyframe(0.5f, modConfig.DaytimeEnemySpawnCurve2.Value));
-        //        newLevel.outsideEnemySpawnChanceThroughDay = new AnimationCurve(new Keyframe(0, modConfig.OutsideEnemySpawnCurve1.Value), new Keyframe(20f, modConfig.OutsideEnemySpawnCurve2.Value), new Keyframe(21f, modConfig.OutsideEnemySpawnCurve3.Value));
+            if (modConfig.EnableEnemyModification.Value)
+            {
+                //newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new Keyframe(0, modConfig.InsideEnemySpawnCurve1.Value), new Keyframe(0.5f, modConfig.InsideEnemySpawnCurve2.Value));
+                //newLevel.daytimeEnemySpawnChanceThroughDay = new AnimationCurve(new Keyframe(0, modConfig.DaytimeEnemySpawnCurve1.Value), new Keyframe(0.5f, modConfig.DaytimeEnemySpawnCurve2.Value));
+                //newLevel.outsideEnemySpawnChanceThroughDay = new AnimationCurve(new Keyframe(0, modConfig.OutsideEnemySpawnCurve1.Value), new Keyframe(20f, modConfig.OutsideEnemySpawnCurve2.Value), new Keyframe(21f, modConfig.OutsideEnemySpawnCurve3.Value));
 
-        //        newLevel.maxEnemyPowerCount += modConfig.MaxInsideEnemyPowerModifier.Value;
-        //        newLevel.maxOutsideEnemyPowerCount += modConfig.MaxOutsideEnemyPowerModifier.Value;
-        //        newLevel.maxDaytimeEnemyPowerCount += modConfig.MaxDaytimeEnemyPowerModifier.Value;
-        //    }
+                newLevel.maxEnemyPowerCount += modConfig.MaxInsideEnemyPowerModifier.Value;
+                newLevel.maxOutsideEnemyPowerCount += modConfig.MaxOutsideEnemyPowerModifier.Value;
+                newLevel.maxDaytimeEnemyPowerCount += modConfig.MaxDaytimeEnemyPowerModifier.Value;
+            }
 
-        //    difficultyModifiedLevels.Add(newLevel.levelID);
-        // }
+            difficultyModifiedLevels.Add(newLevel.levelID);
+        }
     }
 }
