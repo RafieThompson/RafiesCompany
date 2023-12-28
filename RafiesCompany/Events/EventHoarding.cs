@@ -18,19 +18,29 @@ namespace RafiesCompany.Events
 
     class HoardingEvent : BanditEvent
     {
-        //AnimationCurve oldAnimationCurve;
+        AnimationCurve oldAnimationCurve;
         List<int> rarities = new List<int>();
         int oldMaxCount;
+        int oldMaxPowerCount;
+        int oldMinScrapCount;
+        int oldMaxScrapCount;
 
         public override string GetEventName()
         {
-            return "You hear frantic scurrying inside...";
+            return "WARNING.";
         }
 
         public override void OnLoadNewLevel(ref SelectableLevel newLevel, ModConfig configs)
         {
-            //oldAnimationCurve = newLevel.enemySpawnChanceThroughoutDay;
-            //newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new Keyframe(0, 500f));
+            oldMaxPowerCount = newLevel.maxEnemyPowerCount;
+            oldAnimationCurve = newLevel.enemySpawnChanceThroughoutDay;
+            oldMinScrapCount = newLevel.minScrap;
+            oldMaxScrapCount = newLevel.maxScrap;
+            newLevel.maxEnemyPowerCount += 20;
+            newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new Keyframe(0, 500f));
+            newLevel.minScrap += 15;
+            newLevel.maxScrap += 15;
+
 
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
@@ -48,7 +58,11 @@ namespace RafiesCompany.Events
 
         public override void OnLoadNewLevelCleanup(ref SelectableLevel newLevel)
         {
-            //newLevel.enemySpawnChanceThroughoutDay = oldAnimationCurve;
+            newLevel.maxEnemyPowerCount = oldMaxPowerCount;
+            newLevel.enemySpawnChanceThroughoutDay = oldAnimationCurve;
+            newLevel.minScrap = oldMinScrapCount;
+            newLevel.maxScrap = oldMaxScrapCount;
+
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
                 newLevel.Enemies[i].rarity = rarities[i];

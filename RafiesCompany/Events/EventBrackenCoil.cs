@@ -18,7 +18,7 @@ namespace RafiesCompany.Events
 
     class BrackenCoilEvent : BanditEvent
     {
-        // AnimationCurve oldAnimationCurve; // If u want to change spawnfrequency
+        /*AnimationCurve oldAnimationCurve;*/ // If u want to change spawnfrequency
 
         // List to store the original rarities of enemies
         List<int> rarities = new List<int>();
@@ -26,16 +26,28 @@ namespace RafiesCompany.Events
         // Variables to store the original maximum counts of enemies of specific types
         int oldCoilMax;
         int oldFlowerMax;
+        int oldMaxPowerCount;
+        int oldMinScrapCount;
+        int oldMaxScrapCount;
 
         // Returns the name of the event
         public override string GetEventName()
         {
-            return "You feel a tingle down your spine...";
+            return "WARNING.";
         }
 
         // Called when a new level is loaded
         public override void OnLoadNewLevel(ref SelectableLevel newLevel, ModConfig configs)
         {
+            oldMinScrapCount = newLevel.minScrap;
+            oldMaxScrapCount = newLevel.maxScrap;
+            //oldAnimationCurve = newLevel.enemySpawnChanceThroughoutDay;
+            oldMaxPowerCount = newLevel.maxEnemyPowerCount;
+            //newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new Keyframe(0, 500f));
+            newLevel.maxEnemyPowerCount += 20;
+            newLevel.minScrap += 18;
+            newLevel.maxScrap += 25;
+
             // Loop through all enemies in the new level
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
@@ -73,6 +85,10 @@ namespace RafiesCompany.Events
         // Called to clean up changes when the level is unloaded or the event is over
         public override void OnLoadNewLevelCleanup(ref SelectableLevel newLevel)
         {
+            newLevel.maxScrap = oldMaxScrapCount;
+            newLevel.minScrap = oldMinScrapCount;
+            //newLevel.enemySpawnChanceThroughoutDay = oldAnimationCurve;
+            newLevel.maxEnemyPowerCount = oldMaxPowerCount;
             // Loop through all enemies in the new level
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {

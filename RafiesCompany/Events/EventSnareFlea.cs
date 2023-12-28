@@ -18,20 +18,28 @@ namespace RafiesCompany.Events
 
     class SnareFleaEvent : BanditEvent
     {
-        //AnimationCurve oldAnimationCurve;
+        AnimationCurve oldAnimationCurve;
         List<int> rarities = new List<int>();
+        int oldMaxPowerCount;
         int oldMaxCount;
-
+        int oldMinScrapCount;
+        int oldMaxScrapCount;
 
         public override string GetEventName()
         {
-            return "Your breath quickens...";
+            return "WARNING.";
         }
 
         public override void OnLoadNewLevel(ref SelectableLevel newLevel, ModConfig configs)
         {
-            //oldAnimationCurve = newLevel.enemySpawnChanceThroughoutDay;
-            //newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new UnityEngine.Keyframe(0, 500f));
+            oldAnimationCurve = newLevel.enemySpawnChanceThroughoutDay;
+            oldMaxPowerCount = newLevel.maxEnemyPowerCount;
+            oldMinScrapCount = newLevel.minScrap;
+            oldMaxScrapCount = newLevel.maxScrap;
+            newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new UnityEngine.Keyframe(0, 500f));
+            newLevel.maxEnemyPowerCount += 20;
+            newLevel.minScrap += 15;
+            newLevel.maxScrap += 20;
 
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
@@ -49,7 +57,10 @@ namespace RafiesCompany.Events
 
         public override void OnLoadNewLevelCleanup(ref SelectableLevel newLevel)
         {
-            //newLevel.enemySpawnChanceThroughoutDay = oldAnimationCurve;
+            newLevel.enemySpawnChanceThroughoutDay = oldAnimationCurve;
+            newLevel.maxEnemyPowerCount = oldMaxPowerCount;
+            newLevel.minScrap = oldMinScrapCount;
+            newLevel.maxScrap = oldMaxScrapCount;
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
                 newLevel.Enemies[i].rarity = rarities[i];

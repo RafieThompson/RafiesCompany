@@ -21,16 +21,25 @@ namespace RafiesCompany.Events
         //AnimationCurve oldAnimationCurve;
         List<int> rarities = new List<int>();
         int oldMaxCount;
+        int oldMaxPowerCount;
+        int oldMinScrapCount;
+        int oldMaxScrapCount;
 
         public override string GetEventName()
         {
-            return "You feel the burden of time...";
+            return "ANOMALY DETECTED.";
         }
 
         public override void OnLoadNewLevel(ref SelectableLevel newLevel, ModConfig configs)
         {
             //oldAnimationCurve = newLevel.enemySpawnChanceThroughoutDay;
+            oldMaxPowerCount = newLevel.maxEnemyPowerCount;
+            oldMinScrapCount = newLevel.minScrap;
+            oldMaxScrapCount = newLevel.maxScrap;
             //newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new Keyframe(0, 500f));
+            newLevel.maxEnemyPowerCount += 20;
+            newLevel.minScrap += 20;
+            newLevel.maxScrap += 25;
 
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
@@ -49,6 +58,9 @@ namespace RafiesCompany.Events
 
         public override void OnLoadNewLevelCleanup(ref SelectableLevel newLevel)
         {
+            newLevel.maxEnemyPowerCount = oldMaxPowerCount;
+            newLevel.minScrap = oldMinScrapCount;
+            newLevel.maxScrap = oldMaxScrapCount;
             //newLevel.enemySpawnChanceThroughoutDay = oldAnimationCurve;
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {

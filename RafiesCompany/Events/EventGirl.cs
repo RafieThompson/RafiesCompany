@@ -20,13 +20,25 @@ namespace RafiesCompany.Events
         int oldRarity;
         int oldGirlMax;
         int oldMaskMax;
+        int oldMaxPowerCount;
+        int oldMinScrapCount;
+        int oldMaxScrapCount;
         public override string GetEventName()
         {
-            return "Even the strongest mind can falter...";
+            return "DO NOT ENTER.";
         }
 
         public override void OnLoadNewLevel(ref SelectableLevel newLevel, ModConfig configs)
         {
+            oldMaxPowerCount = newLevel.maxEnemyPowerCount;
+            oldMinScrapCount = newLevel.minScrap;
+            oldMaxScrapCount = newLevel.maxScrap;
+            newLevel.maxEnemyPowerCount += 20;
+            newLevel.minScrap += 25;
+            newLevel.maxScrap += 30;
+
+
+
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
                 if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<DressGirlAI>() != null)
@@ -50,6 +62,9 @@ namespace RafiesCompany.Events
 
         public override void OnLoadNewLevelCleanup(ref SelectableLevel newLevel)
         {
+            newLevel.minScrap = oldMinScrapCount;
+            newLevel.maxScrap = oldMaxScrapCount;
+            newLevel.maxEnemyPowerCount = oldMaxPowerCount;
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
                 if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<DressGirlAI>() != null)
