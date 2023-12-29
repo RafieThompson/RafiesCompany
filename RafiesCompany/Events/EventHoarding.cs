@@ -48,7 +48,7 @@ namespace RafiesCompany.Events
                 newLevel.Enemies[i].rarity = 0;
                 if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<HoarderBugAI>() != null)
                 {
-                    newLevel.Enemies[i].rarity = 999;
+                    newLevel.Enemies[i].rarity = 100;
 
                     oldMaxCount = newLevel.Enemies[i].enemyType.MaxCount;
                     newLevel.Enemies[i].enemyType.MaxCount = configs.HoardingBugsEventHoardingMax.Value;

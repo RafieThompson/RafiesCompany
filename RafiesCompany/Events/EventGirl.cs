@@ -17,6 +17,7 @@ namespace RafiesCompany.Events
 
     class LittleGirlEvent : BanditEvent
     {
+        List<int> rarities = new List<int>();
         int oldRarity;
         int oldGirlMax;
         int oldMaskMax;
@@ -41,6 +42,8 @@ namespace RafiesCompany.Events
 
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
+                rarities.Add(newLevel.Enemies[i].rarity);
+                newLevel.Enemies[i].rarity = 0;
                 if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<DressGirlAI>() != null)
                 {
                     oldRarity = newLevel.Enemies[i].rarity;
@@ -67,6 +70,7 @@ namespace RafiesCompany.Events
             newLevel.maxEnemyPowerCount = oldMaxPowerCount;
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
+                newLevel.Enemies[i].rarity = rarities[i];
                 if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<DressGirlAI>() != null)
                 {
                     newLevel.Enemies[i].rarity = oldRarity;

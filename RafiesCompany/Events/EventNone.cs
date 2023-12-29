@@ -11,7 +11,7 @@ namespace RafiesCompany.Events
     {
         public override string GetEventName()
         {
-            return "None";
+            return "";
         }
 
         public override void OnLoadNewLevel(ref SelectableLevel newLevel, ModConfig config)

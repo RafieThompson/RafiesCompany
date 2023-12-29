@@ -48,7 +48,7 @@ namespace RafiesCompany.Events
 
                 if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<JesterAI>() != null)
                 {
-                    newLevel.Enemies[i].rarity = 999;
+                    newLevel.Enemies[i].rarity = 100;
 
                     oldMaxCount = newLevel.Enemies[i].enemyType.MaxCount;
                     newLevel.Enemies[i].enemyType.MaxCount = configs.JesterEventJesterMax.Value;
