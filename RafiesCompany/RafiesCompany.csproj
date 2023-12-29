@@ -73,6 +73,7 @@
     <Compile Include="Events\EventList.cs" />
     <Compile Include="Events\EventMasked.cs" />
     <Compile Include="Events\EventNone.cs" />
+    <Compile Include="Events\EventNutcracker.cs" />
     <Compile Include="Events\EventSnareFlea.cs" />
     <Compile Include="Events\EventSpider.cs" />
     <Compile Include="Events\EventThumper.cs" />
