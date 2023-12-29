@@ -20,7 +20,7 @@ namespace RafiesCompany.Patches
         [HarmonyPostfix]
         static void SetBuyingRatePatch(TimeOfDay __instance)
         {
-            if (RafiesCompanyBase.modConfig.CompanyBuyingRate.Value)
+            if (RafiesCompanyBase.modConfig.CompanyBuyingRateModifier.Value)
             {
                 RandomiseBuyingRate();
                 StartOfRound.Instance.SyncCompanyBuyingRateServerRpc();
