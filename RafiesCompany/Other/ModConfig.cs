@@ -9,22 +9,20 @@ namespace RafiesCompany.Other
 {
     public class ModConfig
     {
-        public const string SectionGeneral = "General";
 
         //public ConfigEntry<float> MovementHinderance { get; set; }
         //public ConfigEntry<float> SinkingSpeedMultiplier { get; set; }
 
         public ConfigEntry<bool> SprintMeter { get; set; }
-        public ConfigEntry<bool> CompanyBuyingRate { get; set; }
+        public ConfigEntry<bool> CompanyBuyingRateModifier { get; set; }
         public ConfigEntry<bool> RandomiseQuota { get; set; }
-        public ConfigEntry<bool> EnableDeadlineModification { get; set; }
+        public ConfigEntry<bool> DeadlineModifier { get; set; }
         public ConfigEntry<int> DeadlineDays { get; set; }
-        public ConfigEntry<bool> EnableQuotaModification { get; set; }
-        public ConfigEntry<int> StartingQuota { get; set; }
-        public ConfigEntry<int> QuotaIncrease { get; set; }
-        public ConfigEntry<bool> EnableCreditModification { get; set; }
-        public ConfigEntry<int> StartingCredits { get; set; }
-        public ConfigEntry<int> PassiveCredits { get; set; }
+        public ConfigEntry<bool> StartingQuotaModifier { get; set; }
+        public ConfigEntry<bool> QuotaModifier { get; set; }
+        public ConfigEntry<bool> PassiveCreditsModifier { get; set; }
+        public ConfigEntry<bool> RandomiseStartingCredits { get; set; }
+        //public ConfigEntry<int> PassiveCredits { get; set; }
         public ConfigEntry<bool> EnableScrapModification { get; set; }
         public ConfigEntry<int> MinScrapModifier { get; set; }
         public ConfigEntry<int> MaxScrapModifier { get; set; }
@@ -73,23 +71,26 @@ namespace RafiesCompany.Other
 
         public ConfigEntry<bool> EnableMaskedEvent { get; set; }
         public ConfigEntry<int> MaskedEventMaskedMax { get; set; }
+        public ConfigEntry<bool> EnableNutcrackerEvent { get; set; }
+        public ConfigEntry<int> NutcrackerEventNutcrackerMax { get; set; }
+
         public void InitConfigEntries()
         {
             //MovementHinderance = RafiesCompanyBase.instance.Config.Bind<float>(SectionGeneral, "MovementHinderance", 1.6f, "Defines how much movement speed is slowed in quicksand.");
             //SinkingSpeedMultiplier = RafiesCompanyBase.instance.Config.Bind<float>(SectionGeneral, "SinkingSpeedMultiplier", 0.15f, "The sinking speed multiplier in quicksand.");
-            SprintMeter = RafiesCompanyBase.instance.Config.Bind<bool>(SectionGeneral, "SprintMeter", false, "Unlimited Sprint");
-            CompanyBuyingRate = RafiesCompanyBase.instance.Config.Bind<bool>(SectionGeneral, "CompanyBuyingRate", true, "Add a chance for a random modifier to the company buying rate");
-            EnableDeadlineModification = RafiesCompanyBase.instance.Config.Bind<bool>("Deadline", "DeadlineModification", false, "False sets to vanilla value.");
-            DeadlineDays = RafiesCompanyBase.instance.Config.Bind<int>("Deadline", "DeadlineDays", 4, "Days until the deadline.");
+            SprintMeter = RafiesCompanyBase.instance.Config.Bind<bool>("Misc", "SprintMeter", false, "Unlimited Sprint");
+            CompanyBuyingRateModifier = RafiesCompanyBase.instance.Config.Bind<bool>("Modifier", "CompanyBuyingRate", true, "Allows the company buying rate to fluctuate.");
+            DeadlineModifier = RafiesCompanyBase.instance.Config.Bind<bool>("Modifier", "DeadlineModifier", true, "Adds a random chance for the deadline to increase.");
+            //DeadlineDays = RafiesCompanyBase.instance.Config.Bind<int>("Deadline", "DeadlineDays", 4, "Days until the deadline.");
 
-            RandomiseQuota = RafiesCompanyBase.instance.Config.Bind<bool>("Quota", "RandomiseQuota", true, "Add a random chance for the starting quota to be adjusted");
-            EnableQuotaModification = RafiesCompanyBase.instance.Config.Bind<bool>("Quota", "EnableQuotaModification", false, "False sets to vanilla value.");
-            StartingQuota = RafiesCompanyBase.instance.Config.Bind<int>("Quota", "StartingQuota", 500, "Starting quota.");
-            QuotaIncrease = RafiesCompanyBase.instance.Config.Bind<int>("Quota", "QuotaIncrease", 275, "Quota increase after the deadline.");
+            StartingQuotaModifier = RafiesCompanyBase.instance.Config.Bind<bool>("Modifier", "StartingQuotaModifier", true, "Add a random chance for the starting quota to fluctuate.");
+            //EnableQuotaModification = RafiesCompanyBase.instance.Config.Bind<bool>("Quota", "EnableQuotaModification", false, "False sets to vanilla value.");
+            //StartingQuota = RafiesCompanyBase.instance.Config.Bind<int>("Quota", "StartingQuota", 500, "Starting quota.");
+            QuotaModifier = RafiesCompanyBase.instance.Config.Bind<bool>("Modifier", "QuotaIncrease", true, "Add a chance for the new quota after deadline to fluctuate.");
 
-            EnableCreditModification = RafiesCompanyBase.instance.Config.Bind<bool>("Credits", "EnableCreditModification", false, "False sets to vanilla value.");
-            StartingCredits = RafiesCompanyBase.instance.Config.Bind<int>("Credits", "StartingCredits", 80, "Starting credits.");
-            PassiveCredits = RafiesCompanyBase.instance.Config.Bind<int>("Credits", "PassiveCredits", 50, "Passive credits at the start of every level.");
+            PassiveCreditsModifier = RafiesCompanyBase.instance.Config.Bind<bool>("Modifier", "PassiveCreditsModifier", true, "Adds a chance to earn additional credits after each day.");
+            RandomiseStartingCredits = RafiesCompanyBase.instance.Config.Bind<bool>("Modifier", "RandomiseStartingCredits", true, "Adds a chance for the starting credit amount to fluctuate.");
+            //PassiveCredits = RafiesCompanyBase.instance.Config.Bind<int>("Credits", "PassiveCredits", 50, "Passive credits at the start of every level.");
 
             EnableScrapModification = RafiesCompanyBase.instance.Config.Bind<bool>("Scraps", "EnableScrapModification", false, "False sets to vanilla value.");
             MinScrapModifier = RafiesCompanyBase.instance.Config.Bind<int>("Scraps", "MinScrapModifier", 0, "Added to the minimum total number of scrap in a level.");
@@ -120,7 +121,7 @@ namespace RafiesCompany.Other
             MineSpawnCurve2 = RafiesCompanyBase.instance.Config.Bind<float>("Hazards", "MineSpawnCurve2", 70.0f, "Spawn curve for mines, second value. Increase the number of mines in levels.");
 
             EventHidden = RafiesCompanyBase.instance.Config.Bind<bool>("Events", "EventHidden", false, "Set to true to hide events in the chat.");
-            FixedChance = RafiesCompanyBase.instance.Config.Bind<int>("Events", "FixedChance", 5, "0-100, higher means more chance");
+            FixedChance = RafiesCompanyBase.instance.Config.Bind<int>("Events", "EventChance", 5, "0-100, 0 means no events will happen, 100 means events are guaranteed to happen every day.");
 
             EnableFlowermanCoilEvent = RafiesCompanyBase.instance.Config.Bind<bool>("FlowermanCoilEvent", "EnableFlowermanCoilEvent", true, "Is the flowerman and coil event active.");
             FlowermanCoilEventFlowermanMax = RafiesCompanyBase.instance.Config.Bind<int>("FlowermanCoilEvent", "FlowermanCoilEventFlowermanMax", 3, "Maximum number of flowerman during the event (capped by power modifier).");
@@ -158,6 +159,9 @@ namespace RafiesCompany.Other
 
             EnableMaskedEvent = RafiesCompanyBase.instance.Config.Bind<bool>("MaskedEvent", "EnableMaskedEvent", true, "Is the masked event active.");
             MaskedEventMaskedMax = RafiesCompanyBase.instance.Config.Bind<int>("MaskedEvent", "MaskEventMaskedMax", 4, "Maximum number of masked during the event (capped by power modifier).");
+
+            EnableNutcrackerEvent = RafiesCompanyBase.instance.Config.Bind<bool>("NutcrackerEvent", "EnableNutcrackerEvent", true, "Is the nutcracker event active.");
+            NutcrackerEventNutcrackerMax = RafiesCompanyBase.instance.Config.Bind<int>("NutcrackerEvent", "NutcrackerEventNutcrackerMax", 3, "Maximum number of nutcrackers during the event (capped by power modifier).");
 
         }
     }
