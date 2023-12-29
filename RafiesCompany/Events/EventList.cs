@@ -75,6 +75,10 @@ namespace RafiesCompany.Events
             {
                 AddEvent(new MaskedEventCreator());
             }
+            if (configs.EnableNutcrackerEvent.Value)
+            {
+                AddEvent(new NutcrackerEventCreator());
+            }
         }
     }
 }
