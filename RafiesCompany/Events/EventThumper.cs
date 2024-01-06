@@ -24,6 +24,7 @@ namespace RafiesCompany.Events
         int oldMaxPowerCount;
         int oldMinScrapCount;
         int oldMaxScrapCount;
+        int oldThumperRarity;
 
         public override string GetEventName()
         {
@@ -37,17 +38,18 @@ namespace RafiesCompany.Events
             oldMinScrapCount = newLevel.minScrap;
             oldMaxScrapCount = newLevel.maxScrap;
             //newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new Keyframe(0, 500f));
-            newLevel.maxEnemyPowerCount += 20;
-            newLevel.minScrap += 20;
-            newLevel.maxScrap += 25;
+            newLevel.maxEnemyPowerCount += 5;
+            newLevel.minScrap += 5;
+            newLevel.maxScrap += 10;
 
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
                 rarities.Add(newLevel.Enemies[i].rarity);
-                newLevel.Enemies[i].rarity = 0;
+                //newLevel.Enemies[i].rarity = 0;
 
                 if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<CrawlerAI>() != null)
                 {
+                    oldThumperRarity = newLevel.Enemies[i].rarity;
                     newLevel.Enemies[i].rarity = 100;
 
                     oldMaxCount = newLevel.Enemies[i].enemyType.MaxCount;
@@ -65,10 +67,11 @@ namespace RafiesCompany.Events
 
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
-                newLevel.Enemies[i].rarity = rarities[i];
+                //newLevel.Enemies[i].rarity = rarities[i];
 
                 if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<CrawlerAI>() != null)
                 {
+                    newLevel.Enemies[i].rarity = oldThumperRarity;
                     newLevel.Enemies[i].enemyType.MaxCount = oldMaxCount;
                 }
             }

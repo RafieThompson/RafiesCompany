@@ -65,10 +65,12 @@
     <Compile Include="Events\EventBrackenCoil.cs" />
     <Compile Include="Events\EventCreation.cs" />
     <Compile Include="Events\EventDelivery.cs" />
+    <Compile Include="Events\EventEclipse.cs" />
     <Compile Include="Events\EventGirl.cs" />
     <Compile Include="Events\EventHoarding.cs" />
     <Compile Include="Events\EventJester.cs" />
     <Compile Include="Events\EventJetpack.cs" />
+    <Compile Include="Events\EventKin.cs" />
     <Compile Include="Events\EventLandmine.cs" />
     <Compile Include="Events\EventList.cs" />
     <Compile Include="Events\EventMasked.cs" />

@@ -23,6 +23,7 @@ namespace RafiesCompany.Events
         int oldMaxCount;
         int oldMinScrapCount;
         int oldMaxScrapCount;
+        int oldMaskRarity;
 
         public override string GetEventName()
         {
@@ -35,17 +36,17 @@ namespace RafiesCompany.Events
             oldMaxPowerCount = newLevel.maxEnemyPowerCount;
             oldMinScrapCount = newLevel.minScrap;
             oldMaxScrapCount = newLevel.maxScrap;
-            newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new UnityEngine.Keyframe(0, 500f));
-            newLevel.maxEnemyPowerCount += 20;
+            newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new UnityEngine.Keyframe(0f, 1f), new Keyframe(1f, 7f));
+            newLevel.maxEnemyPowerCount += 5;
             newLevel.minScrap += 15;
             newLevel.maxScrap += 20;
 
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
                 rarities.Add(newLevel.Enemies[i].rarity);
-                newLevel.Enemies[i].rarity = 0;
                 if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<MaskedPlayerEnemy>() != null)
                 {
+                    oldMaskRarity = newLevel.Enemies[i].rarity;
                     newLevel.Enemies[i].rarity = 100;
 
                     oldMaxCount = newLevel.Enemies[i].enemyType.MaxCount;
@@ -62,9 +63,9 @@ namespace RafiesCompany.Events
             newLevel.maxScrap = oldMaxScrapCount;
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
-                newLevel.Enemies[i].rarity = rarities[i];
                 if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<MaskedPlayerEnemy>() != null)
                 {
+                    newLevel.Enemies[i].rarity = oldMaskRarity;
                     newLevel.Enemies[i].enemyType.MaxCount = oldMaxCount;
                 }
             }

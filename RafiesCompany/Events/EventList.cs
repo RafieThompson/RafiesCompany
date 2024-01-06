@@ -79,6 +79,14 @@ namespace RafiesCompany.Events
             {
                 AddEvent(new NutcrackerEventCreator());
             }
+            if (configs.EnableEclipseEvent.Value)
+            {
+                AddEvent(new EclipseEventCreator());
+            }
+            if (configs.EnableKinEvent.Value)
+            {
+                AddEvent(new KinEventCreator());
+            }
         }
     }
 }

@@ -20,6 +20,7 @@ namespace RafiesCompany.Other
         public ConfigEntry<int> DeadlineDays { get; set; }
         public ConfigEntry<bool> StartingQuotaModifier { get; set; }
         public ConfigEntry<bool> QuotaModifier { get; set; }
+        public ConfigEntry<int> QuotaIncrease { get; set; }
         public ConfigEntry<bool> PassiveCreditsModifier { get; set; }
         public ConfigEntry<bool> RandomiseStartingCredits { get; set; }
         //public ConfigEntry<int> PassiveCredits { get; set; }
@@ -73,6 +74,10 @@ namespace RafiesCompany.Other
         public ConfigEntry<int> MaskedEventMaskedMax { get; set; }
         public ConfigEntry<bool> EnableNutcrackerEvent { get; set; }
         public ConfigEntry<int> NutcrackerEventNutcrackerMax { get; set; }
+        public ConfigEntry<bool> EnableEclipseEvent { get; set; }
+        public ConfigEntry<bool> EnableKinEvent { get; set; }
+
+
 
         public void InitConfigEntries()
         {
@@ -86,7 +91,8 @@ namespace RafiesCompany.Other
             StartingQuotaModifier = RafiesCompanyBase.instance.Config.Bind<bool>("Modifier", "StartingQuotaModifier", true, "Add a random chance for the starting quota to fluctuate.");
             //EnableQuotaModification = RafiesCompanyBase.instance.Config.Bind<bool>("Quota", "EnableQuotaModification", false, "False sets to vanilla value.");
             //StartingQuota = RafiesCompanyBase.instance.Config.Bind<int>("Quota", "StartingQuota", 500, "Starting quota.");
-            QuotaModifier = RafiesCompanyBase.instance.Config.Bind<bool>("Modifier", "QuotaIncrease", true, "Add a chance for the new quota after deadline to fluctuate.");
+            QuotaModifier = RafiesCompanyBase.instance.Config.Bind<bool>("Modifier", "QuotaModifier", true, "Enables setting an increased quota value for each deadline.");
+            QuotaIncrease = RafiesCompanyBase.instance.Config.Bind<int>("Modifier", "QuotaIncreaseValue", 250, "How much the quota increases by.");
 
             PassiveCreditsModifier = RafiesCompanyBase.instance.Config.Bind<bool>("Modifier", "PassiveCreditsModifier", true, "Adds a chance to earn additional credits after each day.");
             RandomiseStartingCredits = RafiesCompanyBase.instance.Config.Bind<bool>("Modifier", "RandomiseStartingCredits", true, "Adds a chance for the starting credit amount to fluctuate.");
@@ -121,7 +127,7 @@ namespace RafiesCompany.Other
             MineSpawnCurve2 = RafiesCompanyBase.instance.Config.Bind<float>("Hazards", "MineSpawnCurve2", 70.0f, "Spawn curve for mines, second value. Increase the number of mines in levels.");
 
             EventHidden = RafiesCompanyBase.instance.Config.Bind<bool>("Events", "EventHidden", false, "Set to true to hide events in the chat.");
-            FixedChance = RafiesCompanyBase.instance.Config.Bind<int>("Events", "EventChance", 5, "0-100, 0 means no events will happen, 100 means events are guaranteed to happen every day.");
+            FixedChance = RafiesCompanyBase.instance.Config.Bind<int>("Events", "EventChance", 15, "0-100, 0 means no events will happen, 100 means events are guaranteed to happen every day.");
 
             EnableFlowermanCoilEvent = RafiesCompanyBase.instance.Config.Bind<bool>("FlowermanCoilEvent", "EnableFlowermanCoilEvent", true, "Is the flowerman and coil event active.");
             FlowermanCoilEventFlowermanMax = RafiesCompanyBase.instance.Config.Bind<int>("FlowermanCoilEvent", "FlowermanCoilEventFlowermanMax", 3, "Maximum number of flowerman during the event (capped by power modifier).");
@@ -154,7 +160,7 @@ namespace RafiesCompany.Other
 
             EnableTurretEvent = RafiesCompanyBase.instance.Config.Bind<bool>("TurretEvent", "EnableTurretEvent", true, "Is the turret event active.");
 
-            EnableJesterEvent = RafiesCompanyBase.instance.Config.Bind<bool>("JesterEvent", "EnableJesterEvent", true, "Is the jester event active.");
+            EnableJesterEvent = RafiesCompanyBase.instance.Config.Bind<bool>("JesterEvent", "EnableJesterEvent", false, "Is the jester event active.");
             JesterEventJesterMax = RafiesCompanyBase.instance.Config.Bind<int>("JesterEvent", "JesterEventJesterMax", 3, "Maximum number of jester during the event (capped by power modifier).");
 
             EnableMaskedEvent = RafiesCompanyBase.instance.Config.Bind<bool>("MaskedEvent", "EnableMaskedEvent", true, "Is the masked event active.");
@@ -162,6 +168,10 @@ namespace RafiesCompany.Other
 
             EnableNutcrackerEvent = RafiesCompanyBase.instance.Config.Bind<bool>("NutcrackerEvent", "EnableNutcrackerEvent", true, "Is the nutcracker event active.");
             NutcrackerEventNutcrackerMax = RafiesCompanyBase.instance.Config.Bind<int>("NutcrackerEvent", "NutcrackerEventNutcrackerMax", 3, "Maximum number of nutcrackers during the event (capped by power modifier).");
+
+            EnableEclipseEvent = RafiesCompanyBase.instance.Config.Bind<bool>("EclipseEvent", "EnableEclipseEvent", true, "Is the eclipse event active.");
+
+            EnableKinEvent = RafiesCompanyBase.instance.Config.Bind<bool>("KinEvent", "EnableKinEvent", true, "Is the kin event active. If one player dies the ship votes to leave early.");
 
         }
     }

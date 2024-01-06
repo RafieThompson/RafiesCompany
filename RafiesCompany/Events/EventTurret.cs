@@ -32,7 +32,7 @@ namespace RafiesCompany.Events
                 if (item.prefabToSpawn.GetComponentInChildren<Turret>() != null)
                 {
                     oldCurve = item.numberToSpawn;
-                    item.numberToSpawn = new AnimationCurve(new Keyframe(0f, 50f), new Keyframe(1f, 20));
+                    item.numberToSpawn = new AnimationCurve(new Keyframe(0f, 50f), new Keyframe(1f, 20f));
                 }
             }
         }

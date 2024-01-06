@@ -12,6 +12,7 @@ using RafiesCompany.Events;
 using RafiesCompany.Other;
 using UnityEngine;
 using System.Runtime.CompilerServices;
+using System.Configuration;
 
 namespace RafiesCompany
 {
@@ -86,11 +87,11 @@ namespace RafiesCompany
             // starting Quota modifier
             if (modConfig.StartingQuotaModifier.Value)
             {
-                float randomValue = UnityEngine.Random.Range(0.01f, 0.99f);
+                float randomValue = UnityEngine.Random.Range(0.00f, 1.00f);
 
-                if (randomValue < 0.10f)
+                if (randomValue < 0.50f)
                 {
-                    int randomVariation = UnityEngine.Random.Range(-50, 50);
+                    int randomVariation = UnityEngine.Random.Range(-10, 150);
                     __instance.quotaVariables.startingQuota += randomVariation;
 
                     RafiesCompanyBase.mls.LogInfo($"Randomised quota by {randomVariation}, new rate: {TimeOfDay.Instance.quotaVariables.startingQuota}");
@@ -113,7 +114,7 @@ namespace RafiesCompany
             // starting credits modifier
             if (modConfig.RandomiseStartingCredits.Value)
             {
-                float randomValue = UnityEngine.Random.Range(0.01f, 0.99f);
+                float randomValue = UnityEngine.Random.Range(0.00f, 1.00f);
                 if (randomValue < 0.10f)
                 {
                     int randomVariation = UnityEngine.Random.Range(-50, 50);
@@ -126,7 +127,7 @@ namespace RafiesCompany
                     }
                     else
                     {
-                        HUDManager.Instance.AddTextToChatOnServer($"ATTENTION. We are reallocating some of your credits to a more successful team. Good luck!");
+                        HUDManager.Instance.AddTextToChatOnServer($"ATTENTION. We are reallocating some of your starting credits to a more successful team. Good luck!");
                     }
                 }
                 else
@@ -137,26 +138,7 @@ namespace RafiesCompany
             // quota base increase modifier
             if (modConfig.QuotaModifier.Value)
             {
-                float randomValue = UnityEngine.Random.Range(0.01f, 0.99f);
-                if (randomValue < 0.10f)
-                {
-                    int randomVariation = UnityEngine.Random.Range(-50, 25);
-                    __instance.quotaVariables.baseIncrease += randomVariation;
-
-                    RafiesCompanyBase.mls.LogInfo($"Modified quota base increase by {randomVariation}, new amount: {TimeOfDay.Instance.quotaVariables.baseIncrease}");
-                    if (randomVariation > 0)
-                    {
-                        HUDManager.Instance.AddTextToChatOnServer($"ATTENTION. The base increase of next quota will be higher! Good luck!.");
-                    }
-                    else
-                    {
-                        HUDManager.Instance.AddTextToChatOnServer($"ATTENTION. Thanks to your hard work, the base increase of next quota has been lowered.");
-                    }
-                }
-                else
-                {
-                    RafiesCompanyBase.mls.LogInfo($"Random value: {randomValue}, No modifier, current quota increase: {TimeOfDay.Instance.quotaVariables.baseIncrease}");
-                }
+                __instance.quotaVariables.baseIncrease += modConfig.QuotaIncrease.Value;
             }
             // deadline modifier
             if (modConfig.DeadlineModifier.Value)
@@ -193,18 +175,30 @@ namespace RafiesCompany
             }
             else
             {
+                if (newLevel.currentWeather == LevelWeatherType.Eclipsed)
+                {
+                    newLevel.minScrap += 5;
+                    newLevel.maxScrap += 15;
+
+                    HUDManager.Instance.AddTextToChatOnServer($"This moon is eclipsed, but higher value scrap lies inside!");
+                    RafiesCompanyBase.mls.LogInfo($"Increased minScrap because the weather is Eclipse. New minScrap: {newLevel.minScrap}");
+                }
                 // Add credits
                 Terminal terminal = FindObjectOfType<Terminal>();
 
                 if (modConfig.PassiveCreditsModifier.Value)
                 {
                     float randomValue = UnityEngine.Random.Range(0.01f, 0.99f);
-                    if (randomValue < 0.99f)
+                    if (randomValue < 0.10f)
                     {
                         int randomVariation = UnityEngine.Random.Range(10, 50);
                         terminal.groupCredits += randomVariation;
                         HUDManager.Instance.AddTextToChatOnServer($"ATTENTION. An accounting error means you have more credits in your account. DO NOT SPEND THESE.");
                         RafiesCompanyBase.mls.LogInfo($"Modified passive credits by {randomVariation}, new passive credit amount is: {terminal.groupCredits}");
+                    }
+                    else
+                    {
+                        RafiesCompanyBase.mls.LogInfo($"Random Value: {randomValue}, No passive credit modifier, current passive credits: {terminal.groupCredits}");
                     }
                     //terminal.groupCredits += modConfig.PassiveCredits.Value;
                 }
@@ -281,5 +275,6 @@ namespace RafiesCompany
 
             difficultyModifiedLevels.Add(newLevel.levelID);
         }
+        
     }
 }

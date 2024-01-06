@@ -17,12 +17,13 @@ namespace RafiesCompany.Events
     }
     class NutcrackerEvent : BanditEvent
     {
-        AnimationCurve oldAnimationCurve;
+        //AnimationCurve oldAnimationCurve;
         List<int> rarities = new List<int>();
         int oldMaxPowerCount;
         int oldMaxCount;
         int oldMinScrapCount;
         int oldMaxScrapCount;
+        int oldNutcrackerRarity;
 
         public override string GetEventName()
         {
@@ -31,21 +32,22 @@ namespace RafiesCompany.Events
 
         public override void OnLoadNewLevel(ref SelectableLevel newLevel, ModConfig configs)
         {
-            oldAnimationCurve = newLevel.enemySpawnChanceThroughoutDay;
+            //oldAnimationCurve = newLevel.enemySpawnChanceThroughoutDay;
             oldMaxPowerCount = newLevel.maxEnemyPowerCount;
             oldMinScrapCount = newLevel.minScrap;
             oldMaxScrapCount = newLevel.maxScrap;
-            newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new UnityEngine.Keyframe(0, 500f));
-            newLevel.maxEnemyPowerCount += 20;
-            newLevel.minScrap += 15;
-            newLevel.maxScrap += 20;
+            //newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new UnityEngine.Keyframe(0f, 1f), new Keyframe(1f, 7f));
+            newLevel.maxEnemyPowerCount += 10;
+            newLevel.minScrap += 5;
+            newLevel.maxScrap += 10;
 
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
                 rarities.Add(newLevel.Enemies[i].rarity);
-                newLevel.Enemies[i].rarity = 0;
+                //newLevel.Enemies[i].rarity = 0;
                 if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<NutcrackerEnemyAI>() != null)
                 {
+                    oldNutcrackerRarity = newLevel.Enemies[i].rarity;
                     newLevel.Enemies[i].rarity = 100;
 
                     oldMaxCount = newLevel.Enemies[i].enemyType.MaxCount;
@@ -56,7 +58,7 @@ namespace RafiesCompany.Events
 
         public override void OnLoadNewLevelCleanup(ref SelectableLevel newLevel)
         {
-            newLevel.enemySpawnChanceThroughoutDay = oldAnimationCurve;
+            //newLevel.enemySpawnChanceThroughoutDay = oldAnimationCurve;
             newLevel.maxEnemyPowerCount = oldMaxPowerCount;
             newLevel.minScrap = oldMinScrapCount;
             newLevel.maxScrap = oldMaxScrapCount;
@@ -65,6 +67,7 @@ namespace RafiesCompany.Events
                 newLevel.Enemies[i].rarity = rarities[i];
                 if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<NutcrackerEnemyAI>() != null)
                 {
+                    newLevel.Enemies[i].rarity = oldNutcrackerRarity;
                     newLevel.Enemies[i].enemyType.MaxCount = oldMaxCount;
                 }
             }

@@ -18,7 +18,8 @@ namespace RafiesCompany.Events
     class LittleGirlEvent : BanditEvent
     {
         List<int> rarities = new List<int>();
-        int oldRarity;
+        int oldGirlRarity;
+        int oldMaskRarity;
         int oldGirlMax;
         int oldMaskMax;
         int oldMaxPowerCount;
@@ -34,27 +35,27 @@ namespace RafiesCompany.Events
             oldMaxPowerCount = newLevel.maxEnemyPowerCount;
             oldMinScrapCount = newLevel.minScrap;
             oldMaxScrapCount = newLevel.maxScrap;
-            newLevel.maxEnemyPowerCount += 20;
-            newLevel.minScrap += 25;
-            newLevel.maxScrap += 30;
+            newLevel.maxEnemyPowerCount += 10;
+            newLevel.minScrap += 5;
+            newLevel.maxScrap += 10;
 
 
 
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
                 rarities.Add(newLevel.Enemies[i].rarity);
-                newLevel.Enemies[i].rarity = 0;
+                //newLevel.Enemies[i].rarity = 0;
                 if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<DressGirlAI>() != null)
                 {
-                    oldRarity = newLevel.Enemies[i].rarity;
-                    newLevel.Enemies[i].rarity = 100;
+                    oldGirlRarity = newLevel.Enemies[i].rarity;
+                    newLevel.Enemies[i].rarity = 999;
 
                     oldGirlMax = newLevel.Enemies[i].enemyType.MaxCount;
                     newLevel.Enemies[i].enemyType.MaxCount = configs.LittleGirlEventGirlMax.Value;
                 }
                 if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<MaskedPlayerEnemy>() != null)  
                 {
-                    oldRarity = newLevel.Enemies[i].rarity;
+                    oldMaskRarity = newLevel.Enemies[i].rarity;
                     newLevel.Enemies[i].rarity = 100;
 
                     oldMaskMax = newLevel.Enemies[i].enemyType.MaxCount;
@@ -70,18 +71,33 @@ namespace RafiesCompany.Events
             newLevel.maxEnemyPowerCount = oldMaxPowerCount;
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
-                newLevel.Enemies[i].rarity = rarities[i];
+                //newLevel.Enemies[i].rarity = rarities[i];
                 if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<DressGirlAI>() != null)
                 {
-                    newLevel.Enemies[i].rarity = oldRarity;
+                    newLevel.Enemies[i].rarity = oldGirlRarity;
                     newLevel.Enemies[i].enemyType.MaxCount = oldGirlMax;
                 }
                 else if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<MaskedPlayerEnemy>() != null)
                 {
-                    newLevel.Enemies[i].rarity = oldRarity;
+                    newLevel.Enemies[i].rarity = oldMaskRarity;
                     newLevel.Enemies[i].enemyType.MaxCount = oldMaskMax;
                 }
             }
+        }
+        public override bool IsValid(ref SelectableLevel newLevel)
+        {
+            foreach (var enemy in newLevel.Enemies)
+            {
+                if (enemy.enemyType.enemyPrefab.GetComponent<DressGirlAI>() != null)
+                {
+                    return true;
+                }
+                else if (enemy.enemyType.enemyPrefab.GetComponent<MaskedPlayerEnemy>() != null)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

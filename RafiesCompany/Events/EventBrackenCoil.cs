@@ -23,12 +23,14 @@ namespace RafiesCompany.Events
         // List to store the original rarities of enemies
         List<int> rarities = new List<int>();
 
-        // Variables to store the original maximum counts of enemies of specific types
+        // Variables
         int oldCoilMax;
         int oldFlowerMax;
         int oldMaxPowerCount;
         int oldMinScrapCount;
         int oldMaxScrapCount;
+        int oldCoilRarity;
+        int oldFlowerRarity;
 
         // Returns the name of the event
         public override string GetEventName()
@@ -43,10 +45,10 @@ namespace RafiesCompany.Events
             oldMaxScrapCount = newLevel.maxScrap;
             //oldAnimationCurve = newLevel.enemySpawnChanceThroughoutDay;
             oldMaxPowerCount = newLevel.maxEnemyPowerCount;
-            //newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new Keyframe(0, 500f));
-            newLevel.maxEnemyPowerCount += 20;
-            newLevel.minScrap += 18;
-            newLevel.maxScrap += 25;
+            //newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new Keyframe(0f, 1f), new Keyframe(1f, 7f));
+            newLevel.maxEnemyPowerCount += 10;
+            newLevel.minScrap += 10;
+            newLevel.maxScrap += 15;
 
             // Loop through all enemies in the new level
             for (int i = 0; i < newLevel.Enemies.Count; i++)
@@ -54,12 +56,13 @@ namespace RafiesCompany.Events
                 // Store the original rarity of each enemy
                 rarities.Add(newLevel.Enemies[i].rarity);
                 // set rarity of enemies to 0
-                newLevel.Enemies[i].rarity = 0;
+                //newLevel.Enemies[i].rarity = 0;
                 // Check if the enemy is of type FlowermanAI, change to whatever enemy you need to patch
                 if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<FlowermanAI>() != null)
                 {
+                    oldFlowerRarity = newLevel.Enemies[i].rarity;
                     // Set the rarity to a specific value 0 = never spawns, 100 = guaranteed
-                    newLevel.Enemies[i].rarity = 100;
+                    newLevel.Enemies[i].rarity = 999;
 
                     // Store the original maximum count
                     oldFlowerMax = newLevel.Enemies[i].enemyType.MaxCount;
@@ -71,8 +74,9 @@ namespace RafiesCompany.Events
                 // Check if the enemy is of type SpringManAI
                 if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<SpringManAI>() != null)
                 {
+                    oldCoilRarity = newLevel.Enemies[i].rarity;
                     // Set the rarity to a specific value 0 = never spawns, 100 = guaranteed
-                    newLevel.Enemies[i].rarity = 100;
+                    newLevel.Enemies[i].rarity = 999;
 
                     // Store the original maximum count
                     oldCoilMax = newLevel.Enemies[i].enemyType.MaxCount;
@@ -94,13 +98,14 @@ namespace RafiesCompany.Events
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
                 // Restore the original rarity of each enemy
-                newLevel.Enemies[i].rarity = rarities[i];
+                //newLevel.Enemies[i].rarity = rarities[i];
 
                 // Check if the enemy is of type FlowermanAI
                 if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<FlowermanAI>() != null)
                 {
                     // Restore the original maximum count
                     newLevel.Enemies[i].enemyType.MaxCount = oldFlowerMax;
+                    newLevel.Enemies[i].rarity = oldFlowerRarity;
                 }
 
                 // Check if the enemy is of type SpringManAI
@@ -108,6 +113,7 @@ namespace RafiesCompany.Events
                 {
                     // Restore the original maximum count
                     newLevel.Enemies[i].enemyType.MaxCount = oldCoilMax;
+                    newLevel.Enemies[i].rarity = oldCoilRarity;
                 }
             }
         }

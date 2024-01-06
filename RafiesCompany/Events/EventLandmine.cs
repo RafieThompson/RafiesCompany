@@ -32,7 +32,7 @@ namespace RafiesCompany.Events
                 if (item.prefabToSpawn.GetComponentInChildren<Landmine>() != null)
                 {
                     oldCurve = item.numberToSpawn;
-                    item.numberToSpawn = new AnimationCurve(new UnityEngine.Keyframe(0f, 50f), new UnityEngine.Keyframe(1f, 20f));
+                    item.numberToSpawn = new AnimationCurve(new UnityEngine.Keyframe(0f, 60f), new UnityEngine.Keyframe(1f, 70f));
                 }
             }
         }
