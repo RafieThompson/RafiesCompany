@@ -8,14 +8,15 @@ using UnityEngine;
 
 namespace RafiesCompany.Events
 {
-    class MaskedEventCreator : BanditEventCreator
+    class CoilSnareEventCreator : BanditEventCreator
     {
         public override BanditEvent Create()
         {
-            return new MaskedEvent();
+            return new CoilSnareEvent();
         }
     }
-    class MaskedEvent : BanditEvent
+
+    class CoilSnareEvent : BanditEvent
     {
         AnimationCurve oldAnimationCurve;
         List<int> rarities = new List<int>();
@@ -23,11 +24,12 @@ namespace RafiesCompany.Events
         int oldMaxCount;
         int oldMinScrapCount;
         int oldMaxScrapCount;
-        int oldMaskRarity;
+        int oldSnareFleaRarity;
+        int oldCoilRarity;
 
         public override string GetEventName()
         {
-            return "WE COME FOR YOU.";
+            return "DANGER.";
         }
 
         public override void OnLoadNewLevel(ref SelectableLevel newLevel, ModConfig configs)
@@ -36,7 +38,7 @@ namespace RafiesCompany.Events
             oldMaxPowerCount = newLevel.maxEnemyPowerCount;
             oldMinScrapCount = newLevel.minScrap;
             oldMaxScrapCount = newLevel.maxScrap;
-            newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new UnityEngine.Keyframe(0f, 0.6f));
+            newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new UnityEngine.Keyframe(0f, 0.2f));
             newLevel.maxEnemyPowerCount += 5;
             newLevel.minScrap += 5;
             newLevel.maxScrap += 10;
@@ -44,13 +46,22 @@ namespace RafiesCompany.Events
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
                 rarities.Add(newLevel.Enemies[i].rarity);
-                if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<MaskedPlayerEnemy>() != null)
+                newLevel.Enemies[i].rarity = 5;
+                if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<CentipedeAI>() != null)
                 {
-                    oldMaskRarity = newLevel.Enemies[i].rarity;
-                    newLevel.Enemies[i].rarity = 100;
+                    oldSnareFleaRarity = newLevel.Enemies[i].rarity;
+                    newLevel.Enemies[i].rarity = 999;
 
                     oldMaxCount = newLevel.Enemies[i].enemyType.MaxCount;
-                    newLevel.Enemies[i].enemyType.MaxCount = configs.MaskedEventMaskedMax.Value;
+                    newLevel.Enemies[i].enemyType.MaxCount = configs.CoilSnareEventSnareFleaMax.Value;
+                }
+                else if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<SpringManAI>() != null)
+                {
+                    oldCoilRarity = newLevel.Enemies[i].rarity;
+                    newLevel.Enemies[i].rarity = 999;
+
+                    oldMaxCount = newLevel.Enemies[i].enemyType.MaxCount;
+                    newLevel.Enemies[i].enemyType.MaxCount = configs.CoilSnareEventCoilMax.Value;
                 }
             }
         }
@@ -63,9 +74,15 @@ namespace RafiesCompany.Events
             newLevel.maxScrap = oldMaxScrapCount;
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
-                if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<MaskedPlayerEnemy>() != null)
+                newLevel.Enemies[i].rarity = rarities[i];
+                if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<CentipedeAI>() != null)
                 {
-                    newLevel.Enemies[i].rarity = oldMaskRarity;
+                    newLevel.Enemies[i].rarity = oldSnareFleaRarity;
+                    newLevel.Enemies[i].enemyType.MaxCount = oldMaxCount;
+                }
+                else if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<SpringManAI>() != null)
+                {
+                    newLevel.Enemies[i].rarity = oldCoilRarity;
                     newLevel.Enemies[i].enemyType.MaxCount = oldMaxCount;
                 }
             }
@@ -75,7 +92,11 @@ namespace RafiesCompany.Events
         {
             foreach (var enemy in newLevel.Enemies)
             {
-                if (enemy.enemyType.enemyPrefab.GetComponent<MaskedPlayerEnemy>() != null)
+                if (enemy.enemyType.enemyPrefab.GetComponent<CentipedeAI>() != null)
+                {
+                    return true;
+                }
+                else if (enemy.enemyType.enemyPrefab.GetComponent<SpringManAI>() != null)
                 {
                     return true;
                 }

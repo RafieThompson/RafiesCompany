@@ -76,6 +76,11 @@ namespace RafiesCompany.Other
         public ConfigEntry<int> NutcrackerEventNutcrackerMax { get; set; }
         public ConfigEntry<bool> EnableEclipseEvent { get; set; }
         public ConfigEntry<bool> EnableKinEvent { get; set; }
+        public ConfigEntry<bool> EnableCoilSnareEvent { get; set; }
+        public ConfigEntry<int> CoilSnareEventSnareFleaMax { get; set; }
+        public ConfigEntry<int> CoilSnareEventCoilMax { get; set; }
+        public ConfigEntry<bool> EnableShotgunEvent { get; set; }
+        public ConfigEntry<int> ShotgunEventShotgunCount { get; set; }
 
 
 
@@ -85,10 +90,10 @@ namespace RafiesCompany.Other
             //SinkingSpeedMultiplier = RafiesCompanyBase.instance.Config.Bind<float>(SectionGeneral, "SinkingSpeedMultiplier", 0.15f, "The sinking speed multiplier in quicksand.");
             SprintMeter = RafiesCompanyBase.instance.Config.Bind<bool>("Misc", "SprintMeter", false, "Unlimited Sprint");
             CompanyBuyingRateModifier = RafiesCompanyBase.instance.Config.Bind<bool>("Modifier", "CompanyBuyingRate", true, "Allows the company buying rate to fluctuate.");
-            DeadlineModifier = RafiesCompanyBase.instance.Config.Bind<bool>("Modifier", "DeadlineModifier", true, "Adds a random chance for the deadline to increase.");
+            DeadlineModifier = RafiesCompanyBase.instance.Config.Bind<bool>("Modifier", "DeadlineModifier", false, "Adds a random chance for the deadline to increase.");
             //DeadlineDays = RafiesCompanyBase.instance.Config.Bind<int>("Deadline", "DeadlineDays", 4, "Days until the deadline.");
 
-            StartingQuotaModifier = RafiesCompanyBase.instance.Config.Bind<bool>("Modifier", "StartingQuotaModifier", true, "Add a random chance for the starting quota to fluctuate.");
+            StartingQuotaModifier = RafiesCompanyBase.instance.Config.Bind<bool>("Modifier", "StartingQuotaModifier", false, "Add a random chance for the starting quota to fluctuate.");
             //EnableQuotaModification = RafiesCompanyBase.instance.Config.Bind<bool>("Quota", "EnableQuotaModification", false, "False sets to vanilla value.");
             //StartingQuota = RafiesCompanyBase.instance.Config.Bind<int>("Quota", "StartingQuota", 500, "Starting quota.");
             QuotaModifier = RafiesCompanyBase.instance.Config.Bind<bool>("Modifier", "QuotaModifier", true, "Enables setting an increased quota value for each deadline.");
@@ -98,17 +103,17 @@ namespace RafiesCompany.Other
             RandomiseStartingCredits = RafiesCompanyBase.instance.Config.Bind<bool>("Modifier", "RandomiseStartingCredits", true, "Adds a chance for the starting credit amount to fluctuate.");
             //PassiveCredits = RafiesCompanyBase.instance.Config.Bind<int>("Credits", "PassiveCredits", 50, "Passive credits at the start of every level.");
 
-            EnableScrapModification = RafiesCompanyBase.instance.Config.Bind<bool>("Scraps", "EnableScrapModification", false, "False sets to vanilla value.");
+            EnableScrapModification = RafiesCompanyBase.instance.Config.Bind<bool>("Scraps", "EnableScrapModification", true, "False sets to vanilla value.");
             MinScrapModifier = RafiesCompanyBase.instance.Config.Bind<int>("Scraps", "MinScrapModifier", 0, "Added to the minimum total number of scrap in a level.");
-            MaxScrapModifier = RafiesCompanyBase.instance.Config.Bind<int>("Scraps", "MaxScrapModifier", 45, "Added to the maximum total number of scrap in a level.");
+            MaxScrapModifier = RafiesCompanyBase.instance.Config.Bind<int>("Scraps", "MaxScrapModifier", -5, "Added to the maximum total number of scrap in a level.");
             MinScrapValueModifier = RafiesCompanyBase.instance.Config.Bind<int>("Scraps", "MinScrapValueModifier", 0, "Added to the minimum total value of scrap in a level.");
-            MaxScrapValueModifier = RafiesCompanyBase.instance.Config.Bind<int>("Scraps", "MaxScrapValueModifier", 800, "Added to the maximum total value of scrap in a level.");
+            MaxScrapValueModifier = RafiesCompanyBase.instance.Config.Bind<int>("Scraps", "MaxScrapValueModifier", -100, "Added to the maximum total value of scrap in a level.");
 
-            EnableEnemyModification = RafiesCompanyBase.instance.Config.Bind<bool>("Enemies", "EnableEnemyModification", false, "False sets to vanilla value.");
+            EnableEnemyModification = RafiesCompanyBase.instance.Config.Bind<bool>("Enemies", "EnableEnemyModification", true, "False sets to vanilla value.");
 
             MaxInsideEnemyPowerModifier = RafiesCompanyBase.instance.Config.Bind<int>("Enemies", "MaxInsideEnemyPowerModifier", 5, "Added to the maximum enemy power for inside enemies, this controls the maximum level difficulty.");
-            MaxOutsideEnemyPowerModifier = RafiesCompanyBase.instance.Config.Bind<int>("Enemies", "MaxOutsideEnemyPowerModifier", 5, "Added to the maximum enemy power for outside enemies, this controls the maximum level difficulty.");
-            MaxDaytimeEnemyPowerModifier = RafiesCompanyBase.instance.Config.Bind<int>("Enemies", "MaxDaytimeEnemyPowerModifier", 5, "Added to the maximum enemy power for daytime enemies, this controls the maximum level difficulty.");
+            MaxOutsideEnemyPowerModifier = RafiesCompanyBase.instance.Config.Bind<int>("Enemies", "MaxOutsideEnemyPowerModifier", 0, "Added to the maximum enemy power for outside enemies, this controls the maximum level difficulty.");
+            MaxDaytimeEnemyPowerModifier = RafiesCompanyBase.instance.Config.Bind<int>("Enemies", "MaxDaytimeEnemyPowerModifier", 0, "Added to the maximum enemy power for daytime enemies, this controls the maximum level difficulty.");
 
             //InsideEnemySpawnCurve1 = RafiesCompanyBase.instance.Config.Bind<float>("Enemies", "InsideEnemySpawnCurveValue1", 0.1f, "Spawn curve for inside enemies, start of the day.");
             //InsideEnemySpawnCurve2 = RafiesCompanyBase.instance.Config.Bind<float>("Enemies", "InsideEnemySpawnCurveValue2", 500.0f, "Spawn curve for inside enemies, midday.");
@@ -127,11 +132,11 @@ namespace RafiesCompany.Other
             MineSpawnCurve2 = RafiesCompanyBase.instance.Config.Bind<float>("Hazards", "MineSpawnCurve2", 70.0f, "Spawn curve for mines, second value. Increase the number of mines in levels.");
 
             EventHidden = RafiesCompanyBase.instance.Config.Bind<bool>("Events", "EventHidden", false, "Set to true to hide events in the chat.");
-            FixedChance = RafiesCompanyBase.instance.Config.Bind<int>("Events", "EventChance", 15, "0-100, 0 means no events will happen, 100 means events are guaranteed to happen every day.");
+            FixedChance = RafiesCompanyBase.instance.Config.Bind<int>("Events", "EventChance", 50, "0-100, 0 means no events will happen, 100 means events are guaranteed to happen every day.");
 
-            EnableFlowermanCoilEvent = RafiesCompanyBase.instance.Config.Bind<bool>("FlowermanCoilEvent", "EnableFlowermanCoilEvent", true, "Is the flowerman and coil event active.");
-            FlowermanCoilEventFlowermanMax = RafiesCompanyBase.instance.Config.Bind<int>("FlowermanCoilEvent", "FlowermanCoilEventFlowermanMax", 3, "Maximum number of flowerman during the event (capped by power modifier).");
-            FlowermanCoilEventCoilHeadMax = RafiesCompanyBase.instance.Config.Bind<int>("FlowermanCoilEvent", "FlowermanCoilEventCoilHeadMax", 3, "Maximum number of coil head during the event (capped by power modifier).");
+            //EnableFlowermanCoilEvent = RafiesCompanyBase.instance.Config.Bind<bool>("FlowermanCoilEvent", "EnableFlowermanCoilEvent", false, "Is the flowerman and coil event active.");
+            //FlowermanCoilEventFlowermanMax = RafiesCompanyBase.instance.Config.Bind<int>("FlowermanCoilEvent", "FlowermanCoilEventFlowermanMax", 3, "Maximum number of flowerman during the event (capped by power modifier).");
+            //FlowermanCoilEventCoilHeadMax = RafiesCompanyBase.instance.Config.Bind<int>("FlowermanCoilEvent", "FlowermanCoilEventCoilHeadMax", 2, "Maximum number of coil head during the event (capped by power modifier).");
 
             EnableHoardingBugsEvent = RafiesCompanyBase.instance.Config.Bind<bool>("HoardingBugsEvent", "EnableHoardingBugsEvent", true, "Is the hoarding bugs event active.");
             HoardingBugsEventHoardingMax = RafiesCompanyBase.instance.Config.Bind<int>("HoardingBugsEvent", "HoardingBugsEventHoardingMax", 10, "Maximum number of hoarding bugs during the event (capped by power modifier).");
@@ -143,7 +148,7 @@ namespace RafiesCompany.Other
 
             EnableLittleGirlEvent = RafiesCompanyBase.instance.Config.Bind<bool>("LittleGirlEvent", "EnableLittleGirlEvent", true, "Is the little girl event active.");
             LittleGirlEventGirlMax = RafiesCompanyBase.instance.Config.Bind<int>("LittleGirlEvent", "LittleGirlEventGirlMax", 1, "Maximum number of ghost girls during the event (capped by power modifier).");
-            LittleGirlEventMaskMax = RafiesCompanyBase.instance.Config.Bind<int>("LittleGirlEvent", "LittleGirlEventMaskMax", 3, "Maximum number of masked during the event (capped by power modifier).");
+            LittleGirlEventMaskMax = RafiesCompanyBase.instance.Config.Bind<int>("LittleGirlEvent", "LittleGirlEventMaskMax", 5, "Maximum number of masked during the event (capped by power modifier).");
 
             EnableRandomDeliveryEvent = RafiesCompanyBase.instance.Config.Bind<bool>("RandomDeliveryEvent", "EnableRandomDeliveryEvent", true, "Is the random delivery event(Lost delivery) active.");
 
@@ -151,10 +156,10 @@ namespace RafiesCompany.Other
             SnareFleaEventSnareFleaMax = RafiesCompanyBase.instance.Config.Bind<int>("SnareFleaEvent", "SnareFleaEventSnareFleaMax", 6, "Maximum number of snare flea during the event (capped by power modifier).");
 
             EnableSpiderEvent = RafiesCompanyBase.instance.Config.Bind<bool>("SpiderEvent", "EnableSpiderEvent", true, "Is the spider event active.");
-            SpiderEventSpiderMax = RafiesCompanyBase.instance.Config.Bind<int>("SpiderEvent", "SpiderEventSpiderMax", 5, "Maximum number of spiders during the event (capped by power modifier).");
+            SpiderEventSpiderMax = RafiesCompanyBase.instance.Config.Bind<int>("SpiderEvent", "SpiderEventSpiderMax", 3, "Maximum number of spiders during the event (capped by power modifier).");
 
             EnableThumperEvent = RafiesCompanyBase.instance.Config.Bind<bool>("ThumperEvent", "EnableThumperEvent", true, "Is the thumper event active.");
-            ThumperEventThumperMax = RafiesCompanyBase.instance.Config.Bind<int>("ThumperEvent", "ThumperEventThumperMax", 5, "Maximum number of thumper during the event (capped by power modifier).");
+            ThumperEventThumperMax = RafiesCompanyBase.instance.Config.Bind<int>("ThumperEvent", "ThumperEventThumperMax", 3, "Maximum number of thumper during the event (capped by power modifier).");
 
             EnableThunderEvent = RafiesCompanyBase.instance.Config.Bind<bool>("ThunderEvent", "EnableThunderEvent", true, "Is the thunder event active.");
 
@@ -164,7 +169,7 @@ namespace RafiesCompany.Other
             JesterEventJesterMax = RafiesCompanyBase.instance.Config.Bind<int>("JesterEvent", "JesterEventJesterMax", 3, "Maximum number of jester during the event (capped by power modifier).");
 
             EnableMaskedEvent = RafiesCompanyBase.instance.Config.Bind<bool>("MaskedEvent", "EnableMaskedEvent", true, "Is the masked event active.");
-            MaskedEventMaskedMax = RafiesCompanyBase.instance.Config.Bind<int>("MaskedEvent", "MaskEventMaskedMax", 4, "Maximum number of masked during the event (capped by power modifier).");
+            MaskedEventMaskedMax = RafiesCompanyBase.instance.Config.Bind<int>("MaskedEvent", "MaskEventMaskedMax", 5, "Maximum number of masked during the event (capped by power modifier).");
 
             EnableNutcrackerEvent = RafiesCompanyBase.instance.Config.Bind<bool>("NutcrackerEvent", "EnableNutcrackerEvent", true, "Is the nutcracker event active.");
             NutcrackerEventNutcrackerMax = RafiesCompanyBase.instance.Config.Bind<int>("NutcrackerEvent", "NutcrackerEventNutcrackerMax", 3, "Maximum number of nutcrackers during the event (capped by power modifier).");
@@ -173,6 +178,12 @@ namespace RafiesCompany.Other
 
             EnableKinEvent = RafiesCompanyBase.instance.Config.Bind<bool>("KinEvent", "EnableKinEvent", true, "Is the kin event active. If one player dies the ship votes to leave early.");
 
+            EnableCoilSnareEvent = RafiesCompanyBase.instance.Config.Bind<bool>("CoilSnareEvent", "EnableCoilSnareEvent", true, "Is the CoilSnare event active.");
+            CoilSnareEventSnareFleaMax = RafiesCompanyBase.instance.Config.Bind<int>("CoilSnareEvent", "CoilSnareEventSnareFleaMax", 5, "Maximum number of Snare Fleas during the event (capped by power modifier).");
+            CoilSnareEventSnareFleaMax = RafiesCompanyBase.instance.Config.Bind<int>("CoilSnareEvent", "CoilSnareEventCoilMax", 2, "Maximum number of Coilheads during the event (capped by power modifier).");
+
+            EnableShotgunEvent = RafiesCompanyBase.instance.Config.Bind<bool>("ShotgunEvent", "EnableShotgunEvent", true, "Is the shotgun event active.");
+            ShotgunEventShotgunCount = RafiesCompanyBase.instance.Config.Bind<int>("ShotgunEvent", "ShotgunCount", 2, "How many shotguns to add.");
         }
     }
 }

@@ -23,10 +23,6 @@ namespace RafiesCompany.Events
 
         internal static void AddBaseEvents(ModConfig configs)
         {
-            if (configs.EnableFlowermanCoilEvent.Value)
-            {
-                AddEvent(new BrackenCoilEventCreator());
-            }
             if (configs.EnableHoardingBugsEvent.Value)
             {
                 AddEvent(new HoardingEventCreator());
@@ -87,6 +83,15 @@ namespace RafiesCompany.Events
             {
                 AddEvent(new KinEventCreator());
             }
+            if (configs.EnableCoilSnareEvent.Value)
+            {
+                AddEvent(new  CoilSnareEventCreator());
+            }
         }
     }
 }
+
+//if (configs.EnableFlowermanCoilEvent.Value)
+//{
+//    AddEvent(new BrackenCoilEventCreator());
+//}

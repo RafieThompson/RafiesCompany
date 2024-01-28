@@ -22,7 +22,7 @@ namespace RafiesCompany.Events
     {
         public override string GetEventName()
         {
-            return "THE COMPANY ADVISES YOU TO STAY TOGETHER.";
+            return "THE COMPANY ADVISES YOU TO NOT DIE.";
         }
 
         public override void OnLoadNewLevel(ref SelectableLevel newLevel, ModConfig configs)

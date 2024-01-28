@@ -39,8 +39,8 @@ namespace RafiesCompany.Events
             oldMaxScrapCount = newLevel.maxScrap;
             //newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new Keyframe(0, 500f));
             newLevel.maxEnemyPowerCount += 5;
-            newLevel.minScrap += 5;
-            newLevel.maxScrap += 10;
+            newLevel.minScrap += 1;
+            newLevel.maxScrap += 5;
 
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {

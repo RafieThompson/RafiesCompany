@@ -13,6 +13,7 @@ using RafiesCompany.Other;
 using UnityEngine;
 using System.Runtime.CompilerServices;
 using System.Configuration;
+using RafiesCompany;
 
 namespace RafiesCompany
 {
@@ -50,7 +51,6 @@ namespace RafiesCompany
             mls = BepInEx.Logging.Logger.CreateLogSource(modGUID);
             modConfig.InitConfigEntries();
 
-
             mls.LogInfo("Rafie's Company initialized");
             BanditEventList.AddBaseEvents(modConfig);
 
@@ -69,7 +69,6 @@ namespace RafiesCompany
                 mls.LogError($"Failed to patch: {ex}");
             }
         }
-
         public void OnDestroy()
         {
 
@@ -180,7 +179,7 @@ namespace RafiesCompany
                     newLevel.minScrap += 5;
                     newLevel.maxScrap += 15;
 
-                    HUDManager.Instance.AddTextToChatOnServer($"This moon is eclipsed, but higher value scrap lies inside!");
+                    HUDManager.Instance.AddTextToChatOnServer($"DANGER: This moon is eclipsed, but higher value scrap lies inside!");
                     RafiesCompanyBase.mls.LogInfo($"Increased minScrap because the weather is Eclipse. New minScrap: {newLevel.minScrap}");
                 }
                 // Add credits

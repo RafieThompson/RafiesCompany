@@ -19,7 +19,7 @@ namespace RafiesCompany.Events
     {
         public override string GetEventName()
         {
-            return "DLSS1071-ARTIFICER Send their regards...";
+            return "DELIVERY!";
         }
 
         public override void OnLoadNewLevel(ref SelectableLevel newLevel, ModConfig configs)

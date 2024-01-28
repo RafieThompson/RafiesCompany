@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Events\EventBrackenCoil.cs" />
+    <Compile Include="Events\EventCoilSnare.cs" />
     <Compile Include="Events\EventCreation.cs" />
     <Compile Include="Events\EventDelivery.cs" />
     <Compile Include="Events\EventEclipse.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="Events\EventMasked.cs" />
     <Compile Include="Events\EventNone.cs" />
     <Compile Include="Events\EventNutcracker.cs" />
+    <Compile Include="Events\EventShotgun.cs" />
     <Compile Include="Events\EventSnareFlea.cs" />
     <Compile Include="Events\EventSpider.cs" />
     <Compile Include="Events\EventThumper.cs" />

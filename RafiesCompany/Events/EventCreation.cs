@@ -24,6 +24,7 @@ namespace RafiesCompany.Events
     public class EventCreator
     {
         List<BanditEventCreator> customEventOrder = new List<BanditEventCreator> { };
+        private Dictionary<BanditEventCreator, int> eventProbabilities = new Dictionary<BanditEventCreator, int>();
         private static ManualLogSource mls = BepInEx.Logging.Logger.CreateLogSource("RafiesCompany.Events.EventCreation");
         public BanditEvent GetRandomEventWithFixedChance(int fixedChance)
         {
@@ -44,7 +45,50 @@ namespace RafiesCompany.Events
             mls.LogInfo("No Event Selected. Choosing default event (EventNone).");
             return new EventNone();
         }
+        //public BanditEvent GetRandomEventWithProbabilities()
+        //{
+        //    // Select an event based on probabilities
+        //    BanditEventCreator selectedEvent = SelectEventBasedOnProbabilities();
 
+        //    if (selectedEvent != null)
+        //    {
+        //        mls.LogInfo($"Selected Event: {selectedEvent.GetType().Name}");
+        //        return selectedEvent.Create();
+        //    }
+
+        //    // If no event is selected, return a default event
+        //    mls.LogInfo("No Event Selected. Choosing default event (EventNone).");
+        //    return new EventNone();
+        //}
+        //private BanditEventCreator SelectEventBasedOnProbabilities()
+        //{
+        //    Random random = new Random();
+        //    int totalProbability = eventProbabilities.Values.Sum();
+        //    int randomValue = random.Next(totalProbability);
+
+        //    foreach (var kvp in eventProbabilities)
+        //    {
+        //        if (randomValue < kvp.Value)
+        //        {
+        //            return kvp.Key;
+        //        }
+        //        randomValue -= kvp.Value;
+        //    }
+
+        //    return null; // No event selected based on probabilities
+        //}
+
+        //public void UpdateEventProbabilities(BanditEventCreator selectedEvent)
+        //{
+        //    // Update event probabilities based on the selected event
+        //    if (eventProbabilities.ContainsKey(selectedEvent))
+        //    {
+        //        eventProbabilities[selectedEvent]++;
+        //    }
+        //    else
+        //    {
+        //        eventProbabilities[selectedEvent] = 1;
+        //    }
+        //}
     }
-
 }

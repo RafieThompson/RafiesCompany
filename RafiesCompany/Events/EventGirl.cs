@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace RafiesCompany.Events
 {
@@ -17,6 +18,7 @@ namespace RafiesCompany.Events
 
     class LittleGirlEvent : BanditEvent
     {
+        AnimationCurve oldAnimationCurve; // If u want to change spawnfrequency
         List<int> rarities = new List<int>();
         int oldGirlRarity;
         int oldMaskRarity;
@@ -35,9 +37,11 @@ namespace RafiesCompany.Events
             oldMaxPowerCount = newLevel.maxEnemyPowerCount;
             oldMinScrapCount = newLevel.minScrap;
             oldMaxScrapCount = newLevel.maxScrap;
+            oldAnimationCurve = newLevel.enemySpawnChanceThroughoutDay;
             newLevel.maxEnemyPowerCount += 10;
             newLevel.minScrap += 5;
             newLevel.maxScrap += 10;
+            newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new Keyframe(0f, 0.5f));
 
 
 
@@ -56,7 +60,7 @@ namespace RafiesCompany.Events
                 if (newLevel.Enemies[i].enemyType.enemyPrefab.GetComponent<MaskedPlayerEnemy>() != null)  
                 {
                     oldMaskRarity = newLevel.Enemies[i].rarity;
-                    newLevel.Enemies[i].rarity = 100;
+                    newLevel.Enemies[i].rarity = 999;
 
                     oldMaskMax = newLevel.Enemies[i].enemyType.MaxCount;
                     newLevel.Enemies[i].enemyType.MaxCount = configs.LittleGirlEventMaskMax.Value;
@@ -68,6 +72,7 @@ namespace RafiesCompany.Events
         {
             newLevel.minScrap = oldMinScrapCount;
             newLevel.maxScrap = oldMaxScrapCount;
+            newLevel.enemySpawnChanceThroughoutDay = oldAnimationCurve;
             newLevel.maxEnemyPowerCount = oldMaxPowerCount;
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {

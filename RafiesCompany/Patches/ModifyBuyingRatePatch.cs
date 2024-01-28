@@ -52,6 +52,13 @@ namespace RafiesCompany.Patches
             else
             {
                 mls.LogInfo($"Random value: {randomValue}, No randomization, current rate: {StartOfRound.Instance.companyBuyingRate}");
+
+                // this is just here for reference
+                List<Item> allItems = StartOfRound.Instance.allItemsList.itemsList;
+                foreach (var item in allItems)
+                {
+                    mls.LogInfo($"Found item: {item.name}");
+                }
             }
         }
         private static string GetRandomMessage(string[] messages)

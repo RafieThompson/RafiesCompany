@@ -20,7 +20,7 @@ namespace RafiesCompany.Events
     {
         public override string GetEventName()
         {
-            return "Something sparkles in the sky...";
+            return "DELIVERY!";
         }
 
         public override void OnLoadNewLevel(ref SelectableLevel newLevel, ModConfig configs)

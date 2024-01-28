@@ -36,8 +36,8 @@ namespace RafiesCompany.Events
 
             newLevel.currentWeather = LevelWeatherType.Eclipsed;
             newLevel.overrideWeather = false;
-            newLevel.minScrap += 10;
-            newLevel.maxScrap += 15;
+            newLevel.minScrap += 1;
+            newLevel.maxScrap += 5;
         }
 
         public override void OnLoadNewLevelCleanup(ref SelectableLevel newLevel)

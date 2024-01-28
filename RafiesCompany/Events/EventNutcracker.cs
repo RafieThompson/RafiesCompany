@@ -27,7 +27,7 @@ namespace RafiesCompany.Events
 
         public override string GetEventName()
         {
-            return "DANGER.";
+            return "WARNING.";
         }
 
         public override void OnLoadNewLevel(ref SelectableLevel newLevel, ModConfig configs)
@@ -38,8 +38,8 @@ namespace RafiesCompany.Events
             oldMaxScrapCount = newLevel.maxScrap;
             //newLevel.enemySpawnChanceThroughoutDay = new AnimationCurve(new UnityEngine.Keyframe(0f, 1f), new Keyframe(1f, 7f));
             newLevel.maxEnemyPowerCount += 10;
-            newLevel.minScrap += 5;
-            newLevel.maxScrap += 10;
+            newLevel.minScrap += 1;
+            newLevel.maxScrap += 5;
 
             for (int i = 0; i < newLevel.Enemies.Count; i++)
             {
